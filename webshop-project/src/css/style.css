@@ -1,8 +1,8 @@
 body {
-    font-family: Arial, sans-serif;
+    background: #f7f7fa;
+    font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
+    color: #222;
 }
 
 header {
@@ -31,9 +31,9 @@ nav a:hover {
 }
 
 .container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
 }
 
 .product {
@@ -50,6 +50,46 @@ nav a:hover {
 
 .product p {
     margin: 10px 0;
+}
+
+.hero {
+    background: #e0e7ff;
+    padding: 30px 20px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #3b82f6;
+}
+
+.product-form input, .product-form button {
+    margin: 8px 4px;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+}
+
+.product-form button {
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.product-form button:hover {
+    background: #2563eb;
 }
 
 .footer {
