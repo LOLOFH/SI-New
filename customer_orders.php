@@ -1,0 +1,46 @@
+<?php
+require_once 'auth.php';
+require_once 'db.php';
+require_once 'session.php';
+require_once 'config.php';
+
+if (!is_admin()) {
+    http_response_code(403);
+    die('Zugriff verweigert: Adminrechte erforderlich.');
+}
+
+$id = (int)($_GET['id'] ?? 0);
+if (!$id) { die('Kein Kunde angegeben.'); }
+
+$stmt = $pdo->prepare('SELECT customer_id, name, email FROM customers WHERE customer_id=?');
+$stmt->execute([$id]);
+$c = $stmt->fetch();
+if (!$c) { die('Kunde nicht gefunden.'); }
+
+$os = $pdo->prepare('SELECT * FROM orders WHERE customer_id=? ORDER BY order_id DESC');
+$os->execute([$id]);
+$orders = $os->fetchAll();
+
+include 'header.php';
+?>
+<h2>Admin: Bestellungen von <?= htmlspecialchars($c['name']) ?> (<?= htmlspecialchars($c['email']) ?>)</h2>
+
+<div class="card">
+  <table class="table">
+    <tr><th>#</th><th>Datum</th><th>Status</th><th>Summe</th><th>Details</th></tr>
+    <?php if (!$orders): ?>
+      <tr><td colspan="5">Keine Bestellungen.</td></tr>
+    <?php else: foreach ($orders as $o): ?>
+      <tr>
+        <td><?= (int)$o['order_id'] ?></td>
+        <td><?= htmlspecialchars($o['order_date']) ?></td>
+        <td><?= htmlspecialchars($o['status']) ?></td>
+        <td><?= number_format($o['total_price'],2,',','.') ?> €</td>
+        <td><a class="btn-link" href="order_view.php?id=<?= (int)$o['order_id'] ?>">Ansehen</a></td>
+      </tr>
+    <?php endforeach; endif; ?>
+  </table>
+  <p><a class="btn-link" href="customers_admin.php">Zurück</a></p>
+</div>
+
+<?php include 'footer.php'; ?>

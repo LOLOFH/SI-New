@@ -37,8 +37,12 @@ require_once __DIR__.'/auth.php'; // <- wichtig für is_admin() / is_logged_in()
 
         <?php if (function_exists('is_admin') && is_admin()): ?>
             <a href="orders_history.php">Alle Bestellungen</a>
-            <a href="orders_admin.php">Bestellungen verwalten</a>
         <?php endif; ?>
+        <?php if (function_exists('is_admin') && is_admin()): ?>
+    <a href="customers_admin.php">Kunden verwalten</a>
+    <a href="orders_admin.php">Bestellungen verwalten</a>
+<?php endif; ?>
+
     </nav>
 </header>
 <main>
