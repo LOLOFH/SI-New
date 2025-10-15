@@ -36,7 +36,7 @@ include 'header.php';
         <td><?= htmlspecialchars($o['order_date']) ?></td>
         <td><?= htmlspecialchars($o['status']) ?></td>
         <td><?= number_format($o['total_price'],2,',','.') ?> €</td>
-        <td><a class="btn-link" href="order_view.php?id=<?= (int)$o['order_id'] ?>">Ansehen</a></td>
+        <td><a class="btn-link" href="order_view.php?id=<?= (int)$o['order_id'] ?>">Show</a></td>
       </tr>
     <?php endforeach; endif; ?>
   </table>
