@@ -5,8 +5,8 @@ include 'header.php';
 // Alle Produkte laden
 $products = $pdo->query('SELECT * FROM products ORDER BY product_id DESC')->fetchAll();
 ?>
-<h2>Produkte</h2>
-<a class="btn" href="product_add.php">+ Neues Produkt</a>
+<h2>Products</h2>
+<a class="btn" href="product_add.php">+ New Product</a>
 <div class="grid">
 <?php foreach ($products as $p): ?>
     <div class="card">
@@ -17,18 +17,18 @@ $products = $pdo->query('SELECT * FROM products ORDER BY product_id DESC')->fetc
             <input type="hidden" name="product_id" value="<?= (int)$p['product_id'] ?>">
             <input type="number" name="quantity" min="1" value="1" required>
             <?php csrf_field(); ?>
-            <button>In den Warenkorb</button>
+            <button>Add to Basket</button>
         </form>
         <p>
             <a class="btn-link" href="product_delete.php?id=<?= (int)$p['product_id'] ?>" 
-               onclick="return confirm('Produkt wirklich löschen?');">Löschen</a>
+               onclick="return confirm('Produkt wirklich löschen?');">Delete</a>
         </p>
     </div>
 <?php endforeach; ?>
 </div>
 <p>
-  <a class="btn-link" href="product_edit.php?id=<?= (int)$p['product_id'] ?>">Bearbeiten</a> ·
-  <a class="btn-link" href="product_delete.php?id=<?= (int)$p['product_id'] ?>" onclick="return confirm('Produkt wirklich löschen?');">Löschen</a>
+  <a class="btn-link" href="product_edit.php?id=<?= (int)$p['product_id'] ?>">Edit</a> ·
+  <a class="btn-link" href="product_delete.php?id=<?= (int)$p['product_id'] ?>" onclick="return confirm('Produkt wirklich löschen?');">Delete</a>
 </p>
 
 <?php include 'footer.php'; ?>

@@ -24,9 +24,9 @@ if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
 <header>
     <h1><a href="index.php">PHP Webshop</a></h1>
     <nav>
-        <a href="products.php">Produkte</a>
+        <a href="products.php">Products</a>
         <a href="cart.php">
-            Warenkorb
+            Checkout
             <?php
                 $count = 0;
 
@@ -49,19 +49,19 @@ if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
         </a>
 
         <?php if (!empty($_SESSION['user'])): ?>
-            <a href="account.php">Mein Konto</a>
+            <a href="account.php">My Konto</a>
             <a href="logout.php">Logout</a>
         <?php else: ?>
-            <a href="register.php">Registrieren</a>
+            <a href="register.php">Registration</a>
             <a href="login.php">Login</a>
         <?php endif; ?>
 
-        <a href="product_add.php">Produkt hinzufügen</a>
+        <a href="product_add.php">Add Product</a>
 
         <?php if (function_exists('is_admin') && is_admin()): ?>
-            <a href="orders_history.php">Alle Bestellungen</a>
-            <a href="customers_admin.php">Kunden verwalten</a>
-            <a href="orders_admin.php">Bestellungen verwalten</a>
+            <a href="orders_history.php">All Orders</a>
+            <a href="customers_admin.php">Customer Management</a>
+            <a href="orders_admin.php">Edit Orders</a>
         <?php endif; ?>
     </nav>
 </header>

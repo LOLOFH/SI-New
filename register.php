@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
 include 'header.php';
 ?>
-<h2>Registrieren</h2>
+<h2>Registration</h2>
 <?php if ($msg): ?>
   <div class="flash <?= str_starts_with($msg,'Fehler')?'flash-err':'flash-ok' ?>">
     <?= htmlspecialchars($msg) ?>
@@ -36,8 +36,8 @@ include 'header.php';
     <?php csrf_field(); ?>
     <label>Name<input name="name" required></label>
     <label>E-Mail<input type="email" name="email" required></label>
-    <label>Adresse<textarea name="address"></textarea></label>
-    <label>Passwort<input type="password" name="password" required></label>
-    <button>Registrieren</button>
+    <label>Adress<textarea name="address"></textarea></label>
+    <label>Password<input type="password" name="password" required></label>
+    <button>Registration</button>
 </form>
 <?php include 'footer.php'; ?>

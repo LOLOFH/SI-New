@@ -38,20 +38,20 @@ $orders = $q->fetchAll();
 
 include 'header.php';
 ?>
-<h2>Admin: Bestellungen</h2>
+<h2>Admin: Orders</h2>
 <?php if (!empty($_GET['ok'])): ?>
-  <div class="flash flash-ok">Status aktualisiert.</div>
+  <div class="flash flash-ok">Status updated.</div>
 <?php endif; ?>
 
 <div class="card">
   <table class="table">
     <tr>
       <th>#</th>
-      <th>Datum</th>
-      <th>Kunde</th>
-      <th>Summe</th>
+      <th>Date</th>
+      <th>Customer</th>
+      <th>Sum</th>
       <th>Status</th>
-      <th>Aktion</th>
+      <th>Action</th>
     </tr>
     <?php foreach ($orders as $o): ?>
       <tr>
@@ -73,7 +73,7 @@ include 'header.php';
                 </option>
               <?php endforeach; ?>
             </select>
-            <button class="btn">Speichern</button>
+            <button class="btn">Save</button>
           </form>
         </td>
         <td><a class="btn-link" href="order_view.php?id=<?= (int)$o['order_id'] ?>">Details</a></td>

@@ -45,12 +45,12 @@ include 'header.php';
 ?>
 <h2>Checkout</h2>
 <div class="card">
-    <p>Bitte bestätige deine Bestellung.</p>
-    <p><strong>Summe: <?= number_format($total,2,',','.') ?> €</strong></p>
+    <p>Please confirm your order.</p>
+    <p><strong>Sum: <?= number_format($total,2,',','.') ?> €</strong></p>
     <form method="post">
         <?php csrf_field(); ?>
-        <button>Jetzt bestellen</button>
-        <a class="btn-link" href="cart.php">Abbrechen</a>
+        <button>Order now</button>
+        <a class="btn-link" href="cart.php">Cancel</a>
     </form>
 </div>
 <?php include 'footer.php'; ?>

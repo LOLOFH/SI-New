@@ -62,30 +62,30 @@ $orders = $stmt->fetchAll();
 
 include 'header.php';
 ?>
-<h2>Admin: Bestell-Historie (alle Nutzer)</h2>
+<h2>Admin: Order-History (all User)</h2>
 
 <div class="card">
   <form method="get" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">
-      <label>Suche (Name/E-Mail)
+      <label>Search (Name/E-Mail)
           <input type="text" name="q" value="<?= htmlspecialchars($q) ?>" placeholder="z. B. anna oder anna@example.com">
       </label>
       <label>Status
           <select name="status">
-              <option value="">alle</option>
+              <option value="">all</option>
               <?php foreach (['pending','shipped','completed'] as $st): ?>
                   <option value="<?= $st ?>" <?= $status===$st?'selected':'' ?>><?= $st ?></option>
               <?php endforeach; ?>
           </select>
       </label>
-      <label>Von (YYYY-MM-DD)
+      <label>from (YYYY-MM-DD)
           <input type="date" name="from" value="<?= htmlspecialchars($date_from) ?>">
       </label>
-      <label>Bis (YYYY-MM-DD)
+      <label>till (YYYY-MM-DD)
           <input type="date" name="to" value="<?= htmlspecialchars($date_to) ?>">
       </label>
       <div style="align-self:end;">
-          <button class="btn">Filtern</button>
-          <a class="btn-link" href="orders_history.php">Zurücksetzen</a>
+          <button class="btn">Filter</button>
+          <a class="btn-link" href="orders_history.php">remove</a>
       </div>
   </form>
 </div>
@@ -94,15 +94,15 @@ include 'header.php';
   <table class="table">
       <tr>
           <th>#</th>
-          <th>Datum</th>
-          <th>Kunde</th>
-          <th>Artikel</th>
-          <th>Summe</th>
+          <th>Date</th>
+          <th>Customer</th>
+          <th>Article</th>
+          <th>Sum</th>
           <th>Status</th>
           <th>Details</th>
       </tr>
       <?php if (!$orders): ?>
-          <tr><td colspan="7">Keine Bestellungen gefunden.</td></tr>
+          <tr><td colspan="7">No Order found.</td></tr>
       <?php else: ?>
           <?php foreach ($orders as $o): ?>
               <tr>
@@ -115,7 +115,7 @@ include 'header.php';
                   <td><?= (int)$o['items_count'] ?></td>
                   <td><?= number_format($o['total_price'],2,',','.') ?> €</td>
                   <td><?= htmlspecialchars($o['status']) ?></td>
-                  <td><a class="btn-link" href="order_view.php?id=<?= (int)$o['order_id'] ?>">Ansehen</a></td>
+                  <td><a class="btn-link" href="order_view.php?id=<?= (int)$o['order_id'] ?>">Show</a></td>
               </tr>
           <?php endforeach; ?>
       <?php endif; ?>

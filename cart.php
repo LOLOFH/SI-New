@@ -87,17 +87,17 @@ if (!empty($cart)) {
     }
 }
 ?>
-<h2>Warenkorb</h2>
+<h2>Checkout</h2>
 <div class="card">
 <?php if (!$items): ?>
-    <p>Dein Warenkorb ist leer.</p>
+    <p>Your Basket is empty.</p>
 <?php else: ?>
     <table class="table">
         <tr>
-            <th>Produkt</th>
-            <th>Menge</th>
-            <th>Preis</th>
-            <th>Gesamt</th>
+            <th>Product</th>
+            <th>Amount</th>
+            <th>Price</th>
+            <th>Sum</th>
             <th></th>
         </tr>
         <?php foreach($items as $it): $p = $it['p']; ?>
@@ -108,14 +108,14 @@ if (!empty($cart)) {
                 <td><?= number_format((float)$it['line'], 2, ',', '.') ?> €</td>
                 <td>
                     <a class="btn-link" href="cart.php?action=remove&product_id=<?= (int)$p['product_id'] ?>">
-                        Entfernen
+                        Delete
                     </a>
                 </td>
             </tr>
         <?php endforeach; ?>
     </table>
-    <p><strong>Summe: <?= number_format((float)$total, 2, ',', '.') ?> €</strong></p>
-    <a class="btn" href="checkout.php">Zur Kasse</a>
+    <p><strong>Sum: <?= number_format((float)$total, 2, ',', '.') ?> €</strong></p>
+    <a class="btn" href="checkout.php">Checkout</a>
 <?php endif; ?>
 </div>
 <?php include 'footer.php'; ?>

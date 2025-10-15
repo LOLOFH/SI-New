@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 include 'header.php';
 ?>
-<h2>Produkt bearbeiten</h2>
+<h2>Edit Product </h2>
 <?php if ($msg): ?>
   <div class="flash <?= str_starts_with($msg,'Bitte') ? 'flash-err' : 'flash-ok' ?>">
     <?= htmlspecialchars($msg) ?>
@@ -57,15 +57,15 @@ include 'header.php';
     <label>Name
       <input name="name" value="<?= htmlspecialchars($product['name']) ?>" required>
     </label>
-    <label>Beschreibung
+    <label>Description
       <textarea name="description"><?= htmlspecialchars($product['description']) ?></textarea>
     </label>
-    <label>Preis (€)
+    <label>Price (€)
       <input type="number" step="0.01" name="price" value="<?= htmlspecialchars($product['price']) ?>" required>
     </label>
     <div style="display:flex; gap:12px; align-items:center; margin-top:8px;">
-      <button class="btn">Speichern</button>
-      <a class="btn-link" href="products.php">Zurück</a>
+      <button class="btn">Save</button>
+      <a class="btn-link" href="products.php">Back</a>
     </div>
 </form>
 <?php include 'footer.php'; ?>

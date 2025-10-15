@@ -33,7 +33,7 @@ $orders = $stmt->fetchAll();
 
 include 'header.php';
 ?>
-<h2>Mein Konto</h2>
+<h2>My Konto</h2>
 <?php if ($msg): ?>
   <div class="flash <?= str_starts_with($msg,'Fehler')?'flash-err':'flash-ok' ?>">
     <?= htmlspecialchars($msg) ?>
@@ -45,22 +45,22 @@ include 'header.php';
     <?php csrf_field(); ?>
     <label>Name<input name="name" value="<?= htmlspecialchars($_SESSION['user']['name'] ?? '') ?>" required></label>
     <label>E-Mail<input type="email" name="email" value="<?= htmlspecialchars($_SESSION['user']['email'] ?? '') ?>" required></label>
-    <label>Adresse<textarea name="address"><?= htmlspecialchars($_SESSION['user']['address'] ?? '') ?></textarea></label>
-    <button>Speichern</button>
+    <label>Adress<textarea name="address"><?= htmlspecialchars($_SESSION['user']['address'] ?? '') ?></textarea></label>
+    <button>Save</button>
 </form>
 </div>
 
 <div class="card">
-    <h3>Meine Bestellungen</h3>
+    <h3>My Order</h3>
     <table class="table">
-        <tr><th>#</th><th>Datum</th><th>Status</th><th>Summe</th><th>Details</th></tr>
+        <tr><th>#</th><th>Date</th><th>Status</th><th>Summ</th><th>Details</th></tr>
         <?php foreach($orders as $o): ?>
             <tr>
                 <td><?= (int)$o['order_id'] ?></td>
                 <td><?= htmlspecialchars($o['order_date']) ?></td>
                 <td><?= htmlspecialchars($o['status']) ?></td>
                 <td><?= number_format($o['total_price'],2,',','.') ?> €</td>
-                <td><a href="order_view.php?id=<?= (int)$o['order_id'] ?>">Ansehen</a></td>
+                <td><a href="order_view.php?id=<?= (int)$o['order_id'] ?>">Show</a></td>
             </tr>
         <?php endforeach; ?>
     </table>

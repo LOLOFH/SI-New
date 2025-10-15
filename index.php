@@ -1,12 +1,12 @@
 <?php include 'header.php'; ?>
 <div class="card">
-    <h2>Willkommen!</h2>
-    <p>Dies ist ein einfacher Webshop mit separaten Seiten für alle Funktionen.</p>
+    <h2>Welcome!</h2>
+    <p>This is our Webshop</p>
     <ul>
-        <li>Produktliste & Verwaltung</li>
-        <li>Kundenregistrierung & Login</li>
-        <li>Warenkorb & Checkout</li>
-        <li>Bestellhistorie</li>
+        <li>Productlist & Productmanagement</li>
+        <li>Customer login & registration</li>
+        <li>Checkout</li>
+        <li>Orderhistory</li>
     </ul>
 </div>
 <?php include 'footer.php'; ?>

@@ -23,13 +23,13 @@ $orders = $os->fetchAll();
 
 include 'header.php';
 ?>
-<h2>Admin: Bestellungen von <?= htmlspecialchars($c['name']) ?> (<?= htmlspecialchars($c['email']) ?>)</h2>
+<h2>Admin: Order from <?= htmlspecialchars($c['name']) ?> (<?= htmlspecialchars($c['email']) ?>)</h2>
 
 <div class="card">
   <table class="table">
-    <tr><th>#</th><th>Datum</th><th>Status</th><th>Summe</th><th>Details</th></tr>
+    <tr><th>#</th><th>Date</th><th>Status</th><th>Sum</th><th>Details</th></tr>
     <?php if (!$orders): ?>
-      <tr><td colspan="5">Keine Bestellungen.</td></tr>
+      <tr><td colspan="5">No Orders.</td></tr>
     <?php else: foreach ($orders as $o): ?>
       <tr>
         <td><?= (int)$o['order_id'] ?></td>
@@ -40,7 +40,7 @@ include 'header.php';
       </tr>
     <?php endforeach; endif; ?>
   </table>
-  <p><a class="btn-link" href="customers_admin.php">Zurück</a></p>
+  <p><a class="btn-link" href="customers_admin.php">Back</a></p>
 </div>
 
 <?php include 'footer.php'; ?>

@@ -17,12 +17,12 @@ $items = $stmt->fetchAll();
 
 include 'header.php';
 ?>
-<h2>Bestellung #<?= (int)$order['order_id'] ?></h2>
+<h2>Order #<?= (int)$order['order_id'] ?></h2>
 
 <div class="card">
     <p>Status: <strong><?= htmlspecialchars($order['status']) ?></strong></p>
-    <p>Datum: <?= htmlspecialchars($order['order_date']) ?></p>
-    <p>Summe: <strong><?= number_format($order['total_price'],2,',','.') ?> €</strong></p>
+    <p>Date: <?= htmlspecialchars($order['order_date']) ?></p>
+    <p>Sum: <strong><?= number_format($order['total_price'],2,',','.') ?> €</strong></p>
 </div>
 
 <div class="card">

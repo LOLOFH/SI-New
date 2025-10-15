@@ -29,7 +29,7 @@ include 'header.php';
 <form method="post" class="card">
     <?php csrf_field(); ?>
     <label>E-Mail<input type="email" name="email" required></label>
-    <label>Passwort<input type="password" name="password" required></label>
+    <label>Password<input type="password" name="password" required></label>
     <button>Login</button>
 </form>
 <?php include 'footer.php'; ?>

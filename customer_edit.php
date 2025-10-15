@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 include 'header.php';
 ?>
-<h2>Admin: Kunde bearbeiten #<?= (int)$customer['customer_id'] ?></h2>
+<h2>Admin: Edit Customer #<?= (int)$customer['customer_id'] ?></h2>
 
 <?php if ($msg): ?><div class="flash flash-ok"><?= htmlspecialchars($msg) ?></div><?php endif; ?>
 <?php if ($err): ?><div class="flash flash-err"><?= htmlspecialchars($err) ?></div><?php endif; ?>
@@ -76,26 +76,26 @@ include 'header.php';
     <label>E-Mail
       <input type="email" name="email" value="<?= htmlspecialchars($customer['email']) ?>" required>
     </label>
-    <label>Adresse
+    <label>Adress
       <textarea name="address"><?= htmlspecialchars($customer['address']) ?></textarea>
     </label>
-    <button class="btn">Speichern</button>
-    <a class="btn-link" href="customers_admin.php">Zurück</a>
+    <button class="btn">Save</button>
+    <a class="btn-link" href="customers_admin.php">Back</a>
   </form>
 </div>
 
 <div class="card">
-  <h3>Passwort zurücksetzen</h3>
+  <h3>Set back Password</h3>
   <form method="post">
     <?php csrf_field(); ?>
     <input type="hidden" name="_tab" value="password">
-    <label>Neues Passwort
+    <label>New Password
       <input type="password" name="new_password" required>
     </label>
-    <label>Neues Passwort (Wiederholung)
+    <label>New Password (repeate)
       <input type="password" name="new_password2" required>
     </label>
-    <button class="btn">Passwort setzen</button>
+    <button class="btn">Set Password </button>
   </form>
 </div>
 

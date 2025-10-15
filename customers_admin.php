@@ -29,16 +29,16 @@ $customers = $stmt->fetchAll();
 
 include 'header.php';
 ?>
-<h2>Admin: Kundenverwaltung</h2>
+<h2>Admin: Customer-Management</h2>
 
 <div class="card">
   <form method="get" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
-      <label>Suche (Name/E-Mail)
+      <label>Search (Name/E-Mail)
           <input type="text" name="q" value="<?= htmlspecialchars($q) ?>" placeholder="z. B. anna oder anna@example.com">
       </label>
       <div style="align-self:end;">
-          <button class="btn">Suchen</button>
-          <a class="btn-link" href="customers_admin.php">Zurücksetzen</a>
+          <button class="btn">Search</button>
+          <a class="btn-link" href="customers_admin.php">Set back </a>
       </div>
   </form>
 </div>
@@ -49,11 +49,11 @@ include 'header.php';
       <th>#</th>
       <th>Name</th>
       <th>E-Mail</th>
-      <th>Adresse</th>
-      <th>Aktionen</th>
+      <th>Adress</th>
+      <th>Actions</th>
     </tr>
     <?php if (!$customers): ?>
-      <tr><td colspan="5">Keine Kunden gefunden.</td></tr>
+      <tr><td colspan="5">No Customer found.</td></tr>
     <?php else: foreach ($customers as $c): ?>
       <tr>
         <td><?= (int)$c['customer_id'] ?></td>
@@ -61,10 +61,10 @@ include 'header.php';
         <td><?= htmlspecialchars($c['email']) ?></td>
         <td><?= nl2br(htmlspecialchars($c['address'])) ?></td>
         <td>
-          <a class="btn-link" href="customer_orders.php?id=<?= (int)$c['customer_id'] ?>">Bestellungen</a> ·
-          <a class="btn-link" href="customer_edit.php?id=<?= (int)$c['customer_id'] ?>">Bearbeiten</a> ·
+          <a class="btn-link" href="customer_orders.php?id=<?= (int)$c['customer_id'] ?>">Orders</a> ·
+          <a class="btn-link" href="customer_edit.php?id=<?= (int)$c['customer_id'] ?>">Edit</a> ·
           <a class="btn-link" href="customer_delete.php?id=<?= (int)$c['customer_id'] ?>"
-             onclick="return confirm('Kundenkonto wirklich löschen? (Nur möglich ohne Bestellungen)');">Löschen</a>
+             onclick="return confirm('Kundenkonto wirklich löschen? (Nur möglich ohne Bestellungen)');">Delete</a>
         </td>
       </tr>
     <?php endforeach; endif; ?>

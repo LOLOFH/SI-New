@@ -3,7 +3,7 @@
 $DB_HOST = 'localhost';
 $DB_NAME = 'webshop';
 $DB_USER = 'root';
-$DB_PASS = 'aaaa';
+$DB_PASS = '5361';
 $BASE_URL = '/';
 
 // Admin-Settings
