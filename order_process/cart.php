@@ -1,6 +1,7 @@
 <?php
-require_once 'db.php';
-require_once 'session.php';
+include __DIR__ . '/../header.php';
+require_once __DIR__ . '/../db_settings/db.php';
+require_once __DIR__ . '/../session.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -58,7 +59,6 @@ if ($action === 'remove') {
     exit;
 }
 
-include 'header.php';
 
 // ---- Warenkorb laden & normalisieren ----
 $rawCart = $_SESSION['cart'] ?? [];
@@ -118,4 +118,4 @@ if (!empty($cart)) {
     <a class="btn" href="checkout.php">Checkout</a>
 <?php endif; ?>
 </div>
-<?php include 'footer.php'; ?>
+<?php include __DIR__ . '/../footer.php'; ?>

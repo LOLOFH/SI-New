@@ -1,7 +1,7 @@
 <?php
-require_once 'auth.php';
+require_once __DIR__ . '/../db_settings/auth.php';
 require_login();
-require_once 'db.php';
+require_once __DIR__ . '/../db_settings/db.php';
 
 $user = current_user();
 $msg='';
@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
     $address = trim($_POST['address'] ?? '');
 
     if ($name && $email) {
-        $stmt=$pdo->prepare('UPDATE customers SET name=?, email=?, address=? WHERE customer_id=?');
+        $stmt = $pdo->prepare('UPDATE customers SET name=?, email=?, address=? WHERE customer_id=?');
         try {
             $stmt->execute([$name,$email,$address,$user['customer_id']]);
             $_SESSION['user']['name']=$name;
@@ -31,7 +31,7 @@ $stmt = $pdo->prepare('SELECT * FROM orders WHERE customer_id=? ORDER BY order_i
 $stmt->execute([$user['customer_id']]);
 $orders = $stmt->fetchAll();
 
-include 'header.php';
+include __DIR__ . '/../header.php';
 ?>
 <h2>My Konto</h2>
 <?php if ($msg): ?>
@@ -60,10 +60,10 @@ include 'header.php';
                 <td><?= htmlspecialchars($o['order_date']) ?></td>
                 <td><?= htmlspecialchars($o['status']) ?></td>
                 <td><?= number_format($o['total_price'],2,',','.') ?> €</td>
-                <td><a href="order_view.php?id=<?= (int)$o['order_id'] ?>">Show</a></td>
+                <td><a href="../order_process/order_view.php?id=<?= (int)$o['order_id'] ?>">Show</a></td>
             </tr>
         <?php endforeach; ?>
     </table>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include __DIR__ . '/../footer.php'; ?>

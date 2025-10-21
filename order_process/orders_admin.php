@@ -1,8 +1,8 @@
 <?php
-require_once 'auth.php';
-require_once 'db.php';
-require_once 'session.php';
-require_once 'config.php';
+require_once __DIR__ . '/../db_settings/auth.php';
+require_once __DIR__ . '/../db_settings/db.php';
+require_once __DIR__ . '/../session.php';
+require_once __DIR__ . '/../db_settings/config.php';
 
 // Admin-Check (Gast darf Admin sein, wenn DEV_ALLOW_GUEST_ADMIN = true)
 if (!is_admin()) {
@@ -11,7 +11,6 @@ if (!is_admin()) {
 }
 
 // ... Rest der Datei unverändert ...
-
 
 // Status-Update verarbeiten
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -36,7 +35,7 @@ $q = $pdo->query('
 ');
 $orders = $q->fetchAll();
 
-include 'header.php';
+include __DIR__ . '/../header.php';
 ?>
 <h2>Admin: Orders</h2>
 <?php if (!empty($_GET['ok'])): ?>
@@ -81,4 +80,4 @@ include 'header.php';
     <?php endforeach; ?>
   </table>
 </div>
-<?php include 'footer.php'; ?>
+<?php include __DIR__ . '/../footer.php'; ?>

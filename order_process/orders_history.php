@@ -1,8 +1,8 @@
 <?php
-require_once 'auth.php';
-require_once 'db.php';
-require_once 'session.php';
-require_once 'config.php';
+require_once __DIR__ . '/../db_settings/auth.php';
+require_once __DIR__ . '/../db_settings/db.php';
+require_once __DIR__ . '/../session.php';
+require_once __DIR__ . '/../db_settings/config.php';
 
 // Nur Admins dürfen diese Seite sehen (Gast-Admin möglich, wenn DEV_ALLOW_GUEST_ADMIN = true)
 if (!is_admin()) {
@@ -11,12 +11,12 @@ if (!is_admin()) {
 }
 
 // --- Filter einlesen ---
-$q       = trim($_GET['q'] ?? '');                // Name oder E-Mail
-$status  = $_GET['status'] ?? '';                 // pending|shipped|completed
-$date_from = trim($_GET['from'] ?? '');           // YYYY-MM-DD
-$date_to   = trim($_GET['to'] ?? '');             // YYYY-MM-DD
+$q         = trim($_GET['q'] ?? '');                // Name oder E-Mail
+$status    = $_GET['status'] ?? '';                 // pending|shipped|completed
+$date_from = trim($_GET['from'] ?? '');             // YYYY-MM-DD
+$date_to   = trim($_GET['to'] ?? '');               // YYYY-MM-DD
 
-$where = [];
+$where  = [];
 $params = [];
 
 // Suche in Name/Email
@@ -60,7 +60,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $orders = $stmt->fetchAll();
 
-include 'header.php';
+include __DIR__ . '/../header.php';
 ?>
 <h2>Admin: Order-History (all User)</h2>
 
@@ -122,4 +122,4 @@ include 'header.php';
   </table>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include __DIR__ . '/../footer.php'; ?>

@@ -1,9 +1,9 @@
 <?php
-require_once 'db.php';
-require_once 'session.php';
+require_once __DIR__ . '/../db_settings/db.php';
+require_once __DIR__ . '/../session.php';
 $msg = '';
 
-if ($_SERVER['REQUEST_METHOD']==='POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!csrf_ok()) { die('CSRF ungültig'); }
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
         $hash = password_hash($pass, PASSWORD_DEFAULT);
         try {
             $stmt = $pdo->prepare('INSERT INTO customers(name,email,address,password) VALUES (?,?,?,?)');
-            $stmt->execute([$name,$email,$address,$hash]);
+            $stmt->execute([$name, $email, $address, $hash]);
             $msg = 'Registrierung erfolgreich. Bitte einloggen.';
         } catch (PDOException $e) {
             $msg = 'Fehler: E-Mail evtl. schon vergeben.';
@@ -24,11 +24,11 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
     }
 }
 
-include 'header.php';
+include __DIR__ . '/../header.php';
 ?>
 <h2>Registration</h2>
 <?php if ($msg): ?>
-  <div class="flash <?= str_starts_with($msg,'Fehler')?'flash-err':'flash-ok' ?>">
+  <div class="flash <?= str_starts_with($msg, 'Fehler') ? 'flash-err' : 'flash-ok' ?>">
     <?= htmlspecialchars($msg) ?>
   </div>
 <?php endif; ?>
@@ -40,4 +40,4 @@ include 'header.php';
     <label>Password<input type="password" name="password" required></label>
     <button>Registration</button>
 </form>
-<?php include 'footer.php'; ?>
+<?php include __DIR__ . '/../footer.php'; ?>

@@ -1,8 +1,8 @@
 <?php
-require_once 'auth.php';
+require_once __DIR__ . '/../db_settings/auth.php';
 require_login();
-require_once 'db.php';
-require_once 'session.php';
+require_once __DIR__ . '/../db_settings/db.php';
+require_once __DIR__ . '/../session.php';
 
 $cart = $_SESSION['cart'] ?? [];
 if (!$cart) { header('Location: cart.php'); exit; }
@@ -40,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
         die('Checkout fehlgeschlagen: '.htmlspecialchars($e->getMessage()));
     }
 }
+include __DIR__ . '/../header.php';
 
-include 'header.php';
 ?>
 <h2>Checkout</h2>
 <div class="card">
@@ -53,4 +53,4 @@ include 'header.php';
         <a class="btn-link" href="cart.php">Cancel</a>
     </form>
 </div>
-<?php include 'footer.php'; ?>
+<?php include __DIR__ . '/../footer.php'; ?>

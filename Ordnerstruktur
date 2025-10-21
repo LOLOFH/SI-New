@@ -1,0 +1,38 @@
+SI-NEW
+│
+├── customer
+│   ├── account.php
+│   ├── customer_delete.php
+│   ├── customer_edit.php
+│   └── customers_admin.php
+│
+├── db_settings
+│   ├── auth.php
+│   ├── config.php
+│   ├── db.php
+│   └── db.txt
+│
+├── login_register
+│   ├── login.php
+│   ├── logout.php
+│   └── register.php
+│
+├── order_process
+│   ├── cart.php
+│   ├── checkout.php
+│   ├── customer_orders.php
+│   ├── order_view.php
+│   ├── orders_admin.php
+│   └── orders_history.php
+│
+├── products
+│   ├── product_add.php
+│   ├── product_delete.php
+│   ├── product_edit.php
+│   └── products.php
+│
+├── footer.php
+├── header.php
+├── index.php
+├── session.php
+└── styles.css

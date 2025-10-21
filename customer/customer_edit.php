@@ -1,8 +1,8 @@
 <?php
-require_once 'auth.php';
-require_once 'db.php';
-require_once 'session.php';
-require_once 'config.php';
+require_once __DIR__ . '/../db_settings/auth.php';
+require_once __DIR__ . '/../db_settings/db.php';
+require_once __DIR__ . '/../session.php';
+require_once __DIR__ . '/../db_settings/config.php';
 
 if (!is_admin()) {
     http_response_code(403);
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-include 'header.php';
+include __DIR__ . '/../header.php';
 ?>
 <h2>Admin: Edit Customer #<?= (int)$customer['customer_id'] ?></h2>
 
@@ -99,4 +99,4 @@ include 'header.php';
   </form>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include __DIR__ . '/../footer.php'; ?>

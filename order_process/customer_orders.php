@@ -1,8 +1,8 @@
 <?php
-require_once 'auth.php';
-require_once 'db.php';
-require_once 'session.php';
-require_once 'config.php';
+require_once __DIR__ . '/../db_settings/auth.php';
+require_once __DIR__ . '/../db_settings/db.php';
+require_once __DIR__ . '/../session.php';
+require_once __DIR__ . '/../db_settings/config.php';
 
 if (!is_admin()) {
     http_response_code(403);
@@ -21,7 +21,7 @@ $os = $pdo->prepare('SELECT * FROM orders WHERE customer_id=? ORDER BY order_id 
 $os->execute([$id]);
 $orders = $os->fetchAll();
 
-include 'header.php';
+include __DIR__ . '/../header.php';
 ?>
 <h2>Admin: Order from <?= htmlspecialchars($c['name']) ?> (<?= htmlspecialchars($c['email']) ?>)</h2>
 
@@ -40,7 +40,7 @@ include 'header.php';
       </tr>
     <?php endforeach; endif; ?>
   </table>
-  <p><a class="btn-link" href="customers_admin.php">Back</a></p>
+  <p><a class="btn-link" href="../customer/customers_admin.php">Back</a></p>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include __DIR__ . '/../footer.php'; ?>

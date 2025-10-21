@@ -1,8 +1,8 @@
 <?php
-require_once 'auth.php';
-require_once 'db.php';
-require_once 'session.php';
-require_once 'config.php';
+require_once __DIR__ . '/../db_settings/auth.php';
+require_once __DIR__ . '/../db_settings/db.php';
+require_once __DIR__ . '/../session.php';
+require_once __DIR__ . '/../db_settings/config.php';
 
 // Admin-Check (Gast darf Admin sein, wenn DEV_ALLOW_GUEST_ADMIN = true)
 if (!is_admin()) {
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-include 'header.php';
+include __DIR__ . '/../header.php';
 ?>
 <h2>Edit Product </h2>
 <?php if ($msg): ?>
@@ -68,4 +68,4 @@ include 'header.php';
       <a class="btn-link" href="products.php">Back</a>
     </div>
 </form>
-<?php include 'footer.php'; ?>
+<?php include __DIR__ . '/../footer.php'; ?>
