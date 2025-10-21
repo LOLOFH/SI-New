@@ -39,3 +39,13 @@ CREATE TABLE order_items (
     FOREIGN KEY (order_id) REFERENCES orders(order_id),
     FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
+
+----------------------
+neu 
+
+USE webshop;
+
+ALTER TABLE products
+  ADD COLUMN erp_id VARCHAR(64) NULL UNIQUE AFTER product_id,
+  ADD COLUMN stock INT NOT NULL DEFAULT 0 AFTER price,
+  ADD COLUMN active TINYINT(1) NOT NULL DEFAULT 1 AFTER stock;
