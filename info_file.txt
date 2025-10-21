@@ -1,0 +1,32 @@
+What counts as an error (and how you handle it)
+– Technical aborts (fatal) → stop & log
+– Invalid rows → skip & log
+– DB transaction errors → rollback
+– HTTP/REST errors → no file created
+– Validation/conversion errors → row is excluded
+
+Not a technical error, but needs business rules
+– Deleted ERP items stay visible in the shop
+– Price changes that are not wanted
+– Stock = 0 hides products (may or may not be desired)
+
+1) Import & Webshop behavior
+– Pulls JSON from CAP, then UPSERT import
+– active=1 & stock>0 = visible in shop
+– Optional: deactivation logic for ERP IDs no longer delivered
+
+2) File transfer process
+– Files land in incoming/, then moved to processed/ or error/
+– Logs in logs/
+– Trigger is manual (button), optional automation via scheduler/cron
+
+3) Error handling
+– Robust: timeouts, validation, logging, rollback
+– Optional: stricter validation + alerting
+
+Conclusion
+Core requirements are fulfilled.
+“Nice to have”: scheduled automation + deactivation logic
+ for no-longer-present ERP products.
+
+ Update DB watch db.txt last phrase!!!
