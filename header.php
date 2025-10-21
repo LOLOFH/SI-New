@@ -2,10 +2,7 @@
 require_once __DIR__.'/session.php';
 require_once __DIR__.'/db_settings/auth.php';
 
-// Session starten, falls noch nicht geschehen
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+
 
 // Warenkorb initialisieren, falls leer
 if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {

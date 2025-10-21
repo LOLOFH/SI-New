@@ -1,17 +1,18 @@
 <?php
+// order_process/cart.php
 include __DIR__ . '/../header.php';
 require_once __DIR__ . '/../db_settings/db.php';
 require_once __DIR__ . '/../session.php';
 
+// session.php startet die Session schon; hier nur defensive Absicherung
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+$pdo = getPDO();
 $action = $_GET['action'] ?? '';
 
-/**
- * Hilfsfunktion: Menge aus einem Cart-Item extrahieren (Array oder Skalar).
- */
+/** Hilfsfunktion: Menge aus einem Cart-Item extrahieren (Array oder Skalar). */
 function extract_qty($item): int {
     if (is_array($item)) {
         return (int)($item['qty'] ?? $item['quantity'] ?? $item['count'] ?? 1);
@@ -19,9 +20,7 @@ function extract_qty($item): int {
     return (int)$item;
 }
 
-/**
- * Hilfsfunktion: Warenkorb normalisieren -> [product_id => qty(int>0)]
- */
+/** Hilfsfunktion: Warenkorb normalisieren -> [product_id => qty(int>0)] */
 function normalize_cart(array $cart): array {
     $out = [];
     foreach ($cart as $pid => $val) {
@@ -34,31 +33,31 @@ function normalize_cart(array $cart): array {
     return $out;
 }
 
-// Produkt zum Warenkorb hinzufügen
+// ---- Produkt zum Warenkorb hinzufügen (POST + CSRF) ----
 if ($action === 'add' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!function_exists('csrf_ok') || !csrf_ok()) { die('CSRF ungültig'); }
+    if (!csrf_ok()) { http_response_code(400); exit('CSRF ungültig'); }
 
     $pid = (int)($_POST['product_id'] ?? 0);
     $qty = max(1, (int)($_POST['quantity'] ?? 1));
 
-    // Bestehende Menge extrahieren, auch wenn altes Format (Array) vorliegt
     $existing = $_SESSION['cart'][$pid] ?? 0;
     $existingQty = extract_qty($existing);
-
     $_SESSION['cart'][$pid] = $existingQty + $qty;
 
     header('Location: cart.php');
     exit;
 }
 
-// Produkt aus Warenkorb entfernen
-if ($action === 'remove') {
-    $pid = (int)($_GET['product_id'] ?? 0);
-    unset($_SESSION['cart'][$pid]);
+// ---- Produkt aus Warenkorb entfernen (POST + CSRF) ----
+if ($action === 'remove' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrf_ok()) { http_response_code(400); exit('CSRF ungültig'); }
+
+    $pid = (int)($_POST['product_id'] ?? 0);
+    if ($pid > 0) unset($_SESSION['cart'][$pid]);
+
     header('Location: cart.php');
     exit;
 }
-
 
 // ---- Warenkorb laden & normalisieren ----
 $rawCart = $_SESSION['cart'] ?? [];
@@ -69,7 +68,6 @@ $total = 0.0;
 $items = [];
 
 if (!empty($cart)) {
-    // Sichere Prepared-Statement Abfrage
     $ids = array_keys($cart);
     $placeholders = implode(',', array_fill(0, count($ids), '?'));
     $sql = "SELECT product_id, name, price FROM products WHERE product_id IN ($placeholders)";
@@ -81,7 +79,7 @@ if (!empty($cart)) {
         $pid = (int)$p['product_id'];
         $q   = (int)($cart[$pid] ?? 0);
         $price = (float)$p['price'];
-        $line  = $q * $price;       // <- $q ist jetzt sicher ein int, keine Arrays mehr
+        $line  = $q * $price;
         $total += $line;
         $items[] = ['p' => $p, 'qty' => $q, 'line' => $line];
     }
@@ -107,9 +105,13 @@ if (!empty($cart)) {
                 <td><?= number_format((float)$p['price'], 2, ',', '.') ?> €</td>
                 <td><?= number_format((float)$it['line'], 2, ',', '.') ?> €</td>
                 <td>
-                    <a class="btn-link" href="cart.php?action=remove&product_id=<?= (int)$p['product_id'] ?>">
-                        Delete
-                    </a>
+                    <form method="post" action="cart.php?action=remove" style="display:inline;">
+                        <?php csrf_field(); ?>
+                        <input type="hidden" name="product_id" value="<?= (int)$p['product_id'] ?>">
+                        <button class="btn-link" style="background:none;border:none;padding:0;color:#06c;cursor:pointer;">
+                            Delete
+                        </button>
+                    </form>
                 </td>
             </tr>
         <?php endforeach; ?>
