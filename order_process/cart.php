@@ -4,7 +4,7 @@ include __DIR__ . '/../header.php';
 require_once __DIR__ . '/../db_settings/db.php';
 require_once __DIR__ . '/../session.php';
 
-// session.php startet die Session schon; hier nur defensive Absicherung
+// session.php already starts the session; here only defensive protection
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -12,7 +12,7 @@ if (session_status() === PHP_SESSION_NONE) {
 $pdo = getPDO();
 $action = $_GET['action'] ?? '';
 
-/** Hilfsfunktion: Menge aus einem Cart-Item extrahieren (Array oder Skalar). */
+/** Helper function: Extract quantity from a cart item (array or scalar). */
 function extract_qty($item): int {
     if (is_array($item)) {
         return (int)($item['qty'] ?? $item['quantity'] ?? $item['count'] ?? 1);
@@ -20,7 +20,7 @@ function extract_qty($item): int {
     return (int)$item;
 }
 
-/** Hilfsfunktion: Warenkorb normalisieren -> [product_id => qty(int>0)] */
+/** Helper function: Normalize shopping cart -> [product_id => qty(int>0)] */
 function normalize_cart(array $cart): array {
     $out = [];
     foreach ($cart as $pid => $val) {
@@ -33,9 +33,9 @@ function normalize_cart(array $cart): array {
     return $out;
 }
 
-// ---- Produkt zum Warenkorb hinzufügen (POST + CSRF) ----
+// ---- Add product to cart (POST + CSRF) ----
 if ($action === 'add' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!csrf_ok()) { http_response_code(400); exit('CSRF ungültig'); }
+    if (!csrf_ok()) { http_response_code(400); exit('CSRF invalid'); }
 
     $pid = (int)($_POST['product_id'] ?? 0);
     $qty = max(1, (int)($_POST['quantity'] ?? 1));
@@ -48,9 +48,9 @@ if ($action === 'add' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// ---- Produkt aus Warenkorb entfernen (POST + CSRF) ----
+// ---- Remove product from shopping cart (POST + CSRF) ----
 if ($action === 'remove' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!csrf_ok()) { http_response_code(400); exit('CSRF ungültig'); }
+    if (!csrf_ok()) { http_response_code(400); exit('CSRF invalid'); }
 
     $pid = (int)($_POST['product_id'] ?? 0);
     if ($pid > 0) unset($_SESSION['cart'][$pid]);
@@ -59,11 +59,11 @@ if ($action === 'remove' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// ---- Warenkorb laden & normalisieren ----
+// ---- Load & normalize shopping cart ----
 $rawCart = $_SESSION['cart'] ?? [];
 $cart = normalize_cart(is_array($rawCart) ? $rawCart : []);
 
-// ---- Produkte laden & Summen berechnen ----
+// ---- Load products & calculate totals ----
 $total = 0.0;
 $items = [];
 

@@ -15,12 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $stmt = $pdo->prepare('INSERT INTO customers(name,email,address,password) VALUES (?,?,?,?)');
             $stmt->execute([$name, $email, $address, $hash]);
-            $msg = 'Registrierung erfolgreich. Bitte einloggen.';
+            $msg = 'Registration successful. Please log in.';
         } catch (PDOException $e) {
-            $msg = 'Fehler: E-Mail evtl. schon vergeben.';
+            $msg = 'Error: Email may already be assigned.';
         }
     } else {
-        $msg = 'Bitte alle Pflichtfelder ausfüllen.';
+        $msg = 'Please fill in all mandatory fields.';
     }
 }
 
@@ -28,7 +28,7 @@ include __DIR__ . '/../header.php';
 ?>
 <h2>Registration</h2>
 <?php if ($msg): ?>
-  <div class="flash <?= str_starts_with($msg, 'Fehler') ? 'flash-err' : 'flash-ok' ?>">
+  <div class="flash <?= str_starts_with($msg, 'Error') ? 'flash-err' : 'flash-ok' ?>">
     <?= htmlspecialchars($msg) ?>
   </div>
 <?php endif; ?>

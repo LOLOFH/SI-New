@@ -9,7 +9,7 @@ function current_user() {
 
 function require_login() {
     if (!current_user()) {
-        // Immer Root-Pfad benutzen
+        // Always use root path
         $loginPath = '/login_register/login.php';
         // Absolute URL inkl. Host/Port (funktioniert auch mit php -S localhost:8000)
         $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
@@ -23,10 +23,10 @@ function require_login() {
 function is_logged_in() { return !!current_user(); }
 
 /**
- * Admin-Logik:
- * - Wenn niemand eingeloggt ist und DEV_ALLOW_GUEST_ADMIN === true -> Admin
- * - Sonst Admin, wenn E-Mail in ADMIN_EMAILS steht
- */
+* Admin logic:
+* - If no one is logged in and DEV_ALLOW_GUEST_ADMIN === true -> Admin
+* - Otherwise, Admin if email is in ADMIN_EMAILS
+*/
 function is_admin(): bool {
     $u = current_user();
     $allowGuest = $GLOBALS['DEV_ALLOW_GUEST_ADMIN'] ?? false;

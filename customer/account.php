@@ -19,9 +19,9 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
             $_SESSION['user']['name']=$name;
             $_SESSION['user']['email']=$email;
             $_SESSION['user']['address']=$address;
-            $msg='Daten aktualisiert.';
+            $msg='Data updated.';
         } catch (PDOException $e) {
-            $msg='Fehler: E-Mail evtl. bereits vergeben.';
+            $msg='Error: Email may already be assigned.';
         }
     }
 }
@@ -35,7 +35,7 @@ include __DIR__ . '/../header.php';
 ?>
 <h2>My Konto</h2>
 <?php if ($msg): ?>
-  <div class="flash <?= str_starts_with($msg,'Fehler')?'flash-err':'flash-ok' ?>">
+  <div class="flash <?= str_starts_with($msg,'Error')?'flash-err':'flash-ok' ?>">
     <?= htmlspecialchars($msg) ?>
   </div>
 <?php endif; ?>

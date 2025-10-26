@@ -4,30 +4,30 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../db_settings/db.php';
-require_once __DIR__ . '/../db_settings/auth.php'; // stellt current_user(), is_admin() bereit
+require_once __DIR__ . '/../db_settings/auth.php'; // provides current_user(), is_admin()
 require_once __DIR__ . '/../session.php';
 
 $pdo = getPDO();
 $msg = '';
 $err = '';
 
-// ------- Zugriff: erlaubt wenn (nicht eingeloggt) ODER (Admin) -------
+// ------- Access: allowed if (not logged in) OR (Admin) -------
 $cu = function_exists('current_user') ? current_user() : null;
 $isAdmin = function_exists('is_admin') ? is_admin() : false;
 
-// Wenn niemand eingeloggt ist, gilt man als Admin (wie gefordert)
+// If no one is logged in, you are considered an admin (as required)
 $allowed = ($cu === null) || $isAdmin;
 
 if (!$allowed) {
     http_response_code(403);
-    die('Nur Admins dürfen Produkte hinzufügen.');
+    die('Only admins can add products.');
 }
 
-// ------- POST: anlegen -------
+// ------- POST: Apply -------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!csrf_ok()) { die('CSRF ungültig'); }
 
-    // Eingaben einsammeln & säubern
+    // Collect & clean inputs
     $name  = trim($_POST['name'] ?? '');
     $desc  = trim($_POST['description'] ?? '');
     $price = trim($_POST['price'] ?? '');
@@ -35,24 +35,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stock = $_POST['stock'] ?? '';
     $active = isset($_POST['active']) ? 1 : 0;
 
-    // Basale Validierung
+    // Basic validation
     if ($name === '') {
-        $err = 'Bitte einen Namen angeben.';
+        $err = 'Please provide a name.';
     } elseif ($price === '' || !is_numeric(str_replace(',', '.', $price))) {
-        $err = 'Bitte einen gültigen Preis angeben.';
+        $err = 'Please enter a valid price.';
     } elseif ($stock !== '' && !preg_match('/^-?\d+$/', (string)$stock)) {
-        $err = 'Bitte einen gültigen Lagerbestand (Ganzzahl) angeben.';
+        $err = 'Please enter a valid stock level (integer).';
     }
 
     if ($err === '') {
-        // Preis vereinheitlichen (Komma -> Punkt) und auf 2 Nachkommastellen begrenzen
+        // Standardize price (comma -> point) and limit to 2 decimal places
         $price = number_format((float)str_replace(',', '.', $price), 2, '.', '');
 
-        // Stock normalisieren
+        // Normalize stock
         $stockVal = ($stock === '' ? 0 : (int)$stock);
 
         try {
-            // INSERT mit optionalem erp_id
+            // INSERT with optional erp_id
             $sql = "INSERT INTO products (erp_id, name, description, price, stock, active)
                     VALUES (:erp_id, :name, :description, :price, :stock, :active)";
             $stmt = $pdo->prepare($sql);
@@ -65,17 +65,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':active'      => $active,
             ]);
 
-            $msg = 'Produkt wurde angelegt.';
-            // Formularfelder leeren für erneute Eingabe
+            $msg = 'Product has been created.';
+            // Clear form fields for re-entry
             $name = $desc = $price = $erpId = '';
             $stock = '0';
             $active = 1;
         } catch (PDOException $e) {
-            // Eindeutigkeit von erp_id abfangen
+            // Catch uniqueness of erp_id
             if ($e->getCode() === '23000') {
-                $err = 'Die angegebene ERP-ID existiert bereits.';
+                $err = 'The specified ERP ID already exists.';
             } else {
-                $err = 'Fehler beim Speichern: ' . htmlspecialchars($e->getMessage());
+                $err = 'Error saving: ' . htmlspecialchars($e->getMessage());
             }
         }
     }
@@ -131,7 +131,7 @@ include __DIR__ . '/../header.php';
 
     <div style="margin-top:1rem;">
         <button>Save</button>
-        <a class="btn-link" href="./products.php" style="margin-left:.5rem;">Zurück zur Übersicht</a>
+        <a class="btn-link" href="./products.php" style="margin-left:.5rem;">Back to overview</a>
     </div>
 </form>
 

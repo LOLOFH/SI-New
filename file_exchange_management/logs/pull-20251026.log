@@ -1,0 +1,28 @@
+[2025-10-26 13:17:12] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-26 13:17:12] Error on http://localhost:4004/rest/api/products: Call to undefined function curl_init()
+[2025-10-26 13:17:12] Trying REST: http://localhost:4004/odata/v4/simple-erp/Products?$format=json
+[2025-10-26 13:17:12] Error on http://localhost:4004/odata/v4/simple-erp/Products?$format=json: Call to undefined function curl_init()
+[2025-10-26 13:17:12] ERROR: No working REST endpoint found. Last error: Call to undefined function curl_init()
+[2025-10-26 13:25:12] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-26 13:25:12] Error on http://localhost:4004/rest/api/products: Call to undefined function curl_init()
+[2025-10-26 13:25:12] Trying REST: http://localhost:4004/odata/v4/simple-erp/Products?$format=json
+[2025-10-26 13:25:12] Error on http://localhost:4004/odata/v4/simple-erp/Products?$format=json: Call to undefined function curl_init()
+[2025-10-26 13:25:12] ERROR: No working REST endpoint found. Last error: Call to undefined function curl_init()
+[2025-10-26 13:49:30] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-26 13:49:30] Using endpoint: http://localhost:4004/rest/api/products (items=2)
+[2025-10-26 13:49:30] Wrote file: C:\Users\Zubair Rahimi\Desktop\SIlab1\SI-New\file_exchange_management/incoming/products-20251026-134930.json (records=2)
+[2025-10-26 13:49:34] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-26 13:49:34] Using endpoint: http://localhost:4004/rest/api/products (items=2)
+[2025-10-26 13:49:34] Wrote file: C:\Users\Zubair Rahimi\Desktop\SIlab1\SI-New\file_exchange_management/incoming/products-20251026-134934.json (records=2)
+[2025-10-26 17:34:01] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-26 17:34:01] Using endpoint: http://localhost:4004/rest/api/products (items=2)
+[2025-10-26 17:34:01] Wrote file: C:\Users\Zubair Rahimi\Desktop\SIlab1\SI-New\file_exchange_management/incoming/products-20251026-173401.json (records=2)
+[2025-10-26 17:35:09] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-26 17:35:09] Using endpoint: http://localhost:4004/rest/api/products (items=2)
+[2025-10-26 17:35:09] Wrote file: C:\Users\Zubair Rahimi\Desktop\SIlab1\SI-New\file_exchange_management/incoming/products-20251026-173509.json (records=2)
+[2025-10-26 17:35:32] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-26 17:35:32] Using endpoint: http://localhost:4004/rest/api/products (items=2)
+[2025-10-26 17:35:32] Wrote file: C:\Users\Zubair Rahimi\Desktop\SIlab1\SI-New\file_exchange_management/incoming/products-20251026-173532.json (records=2)
+[2025-10-26 17:41:37] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-26 17:41:37] Using endpoint: http://localhost:4004/rest/api/products (items=2)
+[2025-10-26 17:41:37] Wrote file: C:\Users\Zubair Rahimi\Desktop\SIlab1\SI-New\file_exchange_management/incoming/products-20251026-174137.json (records=2)

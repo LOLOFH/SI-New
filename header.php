@@ -4,7 +4,7 @@ require_once __DIR__.'/db_settings/auth.php';
 
 
 
-// Warenkorb initialisieren, falls leer
+// Initialize shopping cart if empty
 if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
@@ -22,7 +22,9 @@ if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
     <h1><a href="/index.php">PHP Webshop</a></h1>
     <nav>
         <a href="/products/products.php">Products</a>
-        <a href="/order_process/cart.php">
+
+        <?php if (!empty($_SESSION['user'])): ?>
+             <a href="/order_process/cart.php">
             Checkout
             <?php
                 $count = 0;
@@ -38,16 +40,25 @@ if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
                 }
             ?>
         </a>
+        <?php endif; ?>
+
+       
+
+        <?php if (function_exists('is_admin') && is_admin()): ?>
+            <a href="/products/archive.php">Archived Products</a>
+        <?php endif; ?>
 
         <?php if (!empty($_SESSION['user'])): ?>
-            <a href="/customer/account.php">My Konto</a>
+            <a href="/customer/account.php">My Account</a>
             <a href="/login_register/logout.php">Logout</a>
         <?php else: ?>
             <a href="/login_register/register.php">Registration</a>
             <a href="/login_register/login.php">Login</a>
         <?php endif; ?>
 
-        <a href="/products/product_add.php">Add Product</a>
+        <?php if (empty($_SESSION['user'])): ?>
+            <a href="/products/product_add.php">Add product</a>
+        <?php endif; ?>
 
         <?php if (function_exists('is_admin') && is_admin()): ?>
             <a href="/order_process/orders_history.php">All Orders</a>

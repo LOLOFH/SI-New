@@ -4,7 +4,7 @@ require_once __DIR__ . '/../session.php';
 $msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!csrf_ok()) { die('CSRF ungültig'); }
+    if (!csrf_ok()) { die('CSRF invalid'); }
     $email = trim($_POST['email'] ?? '');
     $pass = $_POST['password'] ?? '';
 
@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: ../customer/account.php');
         exit;
     } else {
-        $msg = 'Login fehlgeschlagen.';
+        $msg = 'Login failed.';
     }
 }
 

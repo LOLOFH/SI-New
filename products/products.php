@@ -1,19 +1,31 @@
 <?php
+
+require_once __DIR__ . '/../db_settings/db.php';
+
+/*try {
+    $stmt = $pdo->prepare("UPDATE products SET stock = 10 WHERE stock = 0");
+    $stmt->execute();
+    echo "Stock updated for products with 0 stock.";
+} catch (PDOException $e) {
+    echo "Error updating stock: " . htmlspecialchars($e->getMessage());
+}*/
+
+
 // products/products.php
 
-// Auth zuerst laden (stellt Session, current_user(), is_admin(), csrf_* bereit)
+// Load Auth first (provides Session, current_user(), is_admin(), csrf_*)
 require_once __DIR__ . '/../db_settings/auth.php';
 // DB + Config
-require_once __DIR__ . '/../db_settings/db.php';
+//require_once __DIR__ . '/../db_settings/db.php';
 require_once __DIR__ . '/../db_settings/config.php';
 
 include __DIR__ . '/../header.php';
 
-// --- Helper: Import-Basisverzeichnis robust auflösen -------------------------
+// --- Helper: Robustly resolve import base directory -------------------------
 function resolve_import_base(): ?string {
     $candidates = [
         realpath(__DIR__ . '/../file_exchange_management'),
-        realpath(__DIR__ . '/../file_excange_management'), // Fallback: Tippfehler-Ordner
+        realpath(__DIR__ . '/../file_excange_management'), // Fallback: Typo folder
     ];
     foreach ($candidates as $p) {
         if ($p !== false && is_dir($p)) return $p;
@@ -21,17 +33,17 @@ function resolve_import_base(): ?string {
     return null;
 }
 
-// --- Import / Pull anstoßen (nur Admin) ------------------------------------
+// --- Initiate import / pull (admin only) ------------------------------------
 $flash = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && is_admin()) {
     if (!csrf_ok()) {
-        $flash = 'CSRF ungültig.';
+        $flash = 'CSRF invalid.';
     } else {
         $action = $_POST['do'] ?? '';
         $base   = resolve_import_base();
 
         if (!$base) {
-            $flash = 'Import-Verzeichnis nicht gefunden.';
+            $flash = 'Import directory not found.';
         } else {
             if ($action === 'pull') {
                 // ERP (CAP) -> incoming
@@ -39,27 +51,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && is_admin()) {
                 $out = []; $ret = 0;
                 exec($cmd, $out, $ret);
                 $flash = $ret === 0
-                    ? 'ERP-Daten erfolgreich abgerufen.'
-                    : ('ERP-Pull FEHLGESCHLAGEN: ' . htmlspecialchars(implode("\n", $out)));
+                    ? 'ERP data successfully retrieved.'
+                    : ('ERP-Pull FAILED: ' . htmlspecialchars(implode("\n", $out)));
             } elseif ($action === 'import') {
                 // incoming -> DB
                 $cmd = 'php ' . escapeshellarg($base . '/import_products.php') . ' 2>&1';
                 $out = []; $ret = 0;
                 exec($cmd, $out, $ret);
                 $flash = $ret === 0
-                    ? 'Produktdaten erfolgreich importiert.'
-                    : ('Import FEHLGESCHLAGEN: ' . htmlspecialchars(implode("\n", $out)));
+                    ? 'Product data imported successfully.'
+                    : ('Import FAILED: ' . htmlspecialchars(implode("\n", $out)));
             }
         }
     }
 }
 
-// --- Produkte laden (nur aktive & verfügbare) -------------------------------
+// --- Load products (only active & available) -------------------------------
 $pdo = getPDO();
 $sql = 'SELECT * FROM products WHERE active = 1 AND stock > 0 ORDER BY product_id DESC';
 $products = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
-// --- Letztes Import-Log ermitteln (optional Link anzeigen) ------------------
+// --- Determine last import log (optional Show link) ------------------
 function latest_import_log_path(): ?string {
     $cand = [
         __DIR__ . '/../file_exchange_management/logs',
@@ -76,7 +88,7 @@ function latest_import_log_path(): ?string {
 }
 $latestLog = latest_import_log_path();
 
-// Versuch, einen Web-Pfad fürs Log zu bauen (nur wenn Logs webzugänglich sind)
+// Attempt to build a web path for the log (only if logs are web accessible)
 $latestLogWeb = null;
 if ($latestLog && isset($_SERVER['DOCUMENT_ROOT'])) {
     $docRoot = rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']), '/');
@@ -99,21 +111,29 @@ if ($latestLog && isset($_SERVER['DOCUMENT_ROOT'])) {
         <form method="post">
             <?php csrf_field(); ?>
             <input type="hidden" name="do" value="pull">
-            <button type="submit">Vom ERP ziehen (CAP → incoming)</button>
+            <button type="submit">Pull from ERP (CAP → incoming)</button>
         </form>
         <form method="post">
             <?php csrf_field(); ?>
             <input type="hidden" name="do" value="import">
-            <button type="submit">Import starten (incoming → DB)</button>
+            <button type="submit">Start import (incoming → DB)</button>
         </form>
         <?php if ($latestLogWeb): ?>
-            <a class="btn-link" href="<?= htmlspecialchars($latestLogWeb) ?>" target="_blank">Letztes Import-Log öffnen</a>
+            <a class="btn-link" href="<?= htmlspecialchars($latestLogWeb) ?>" target="_blank">Open last import log</a>
         <?php endif; ?>
         <a class="btn" href="product_add.php">+ New Product</a>
     </div>
 <?php else: ?>
-    <a class="btn" href="product_add.php">+ New Product</a>
+    <!-- <a class="btn" href="product_add.php">+ New Product</a> -->
 <?php endif; ?>
+
+<?php
+// Show message from actions like delete
+if (!empty($_GET['msg'])) {
+    $msg = htmlspecialchars($_GET['msg']);
+    echo '<p style="color: green; font-weight: bold;">' . $msg . '</p>';
+}
+?>
 
 <div class="grid">
 <?php foreach ($products as $p): ?>
@@ -121,29 +141,27 @@ if ($latestLog && isset($_SERVER['DOCUMENT_ROOT'])) {
         <h3><?= htmlspecialchars($p['name']) ?></h3>
         <p><?= nl2br(htmlspecialchars($p['description'])) ?></p>
         <p><strong><?= number_format((float)$p['price'], 2, ',', '.') ?> €</strong></p>
+        
+        <!-- Display stock -->
+        <p><strong>Stock:</strong> <?= (int)$p['stock'] ?></p>
 
+        <?php if (!is_admin()): ?>
         <form method="post" action="../order_process/cart.php?action=add">
             <?php csrf_field(); ?>
             <input type="hidden" name="product_id" value="<?= (int)$p['product_id'] ?>">
-            <input type="number" name="quantity" min="1" value="1" required>
+            <input type="number" name="quantity" min="1" value="1" max="<?= (int)$p['stock'] ?>" required>
             <button>Add to Basket</button>
         </form>
+        <?php endif; ?>
 
         <?php if (is_admin()): ?>
-            <form method="post" action="../order_process/cart.php?action=remove" style="margin-top:.5rem;display:inline;">
-                <?php csrf_field(); ?>
-                <input type="hidden" name="product_id" value="<?= (int)$p['product_id'] ?>">
-                <button type="submit" class="btn-link" style="background:none;border:none;padding:0;color:#06c;cursor:pointer;">
-                    Remove from Basket
-                </button>
-            </form>
-            ·
             <a class="btn-link" href="product_edit.php?id=<?= (int)$p['product_id'] ?>">Edit</a>
             ·
-            <a class="btn-link" href="product_delete.php?id=<?= (int)$p['product_id'] ?>" onclick="return confirm('Produkt wirklich löschen?');">Delete</a>
+            <a class="btn-link" href="product_delete.php?id=<?= (int)$p['product_id'] ?>" onclick="return confirm('Really archive product?');">Archive it</a>
         <?php endif; ?>
     </div>
 <?php endforeach; ?>
 </div>
+
 
 <?php include __DIR__ . '/../footer.php'; ?>

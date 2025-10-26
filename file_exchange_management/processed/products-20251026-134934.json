@@ -1,0 +1,18 @@
+[
+    {
+        "erp_id": "DXTR1000",
+        "name": "MTB",
+        "description": "",
+        "price": "1200.00",
+        "stock": 25,
+        "active": 1
+    },
+    {
+        "erp_id": "GRVL1000",
+        "name": "Gravel",
+        "description": "",
+        "price": "2300.00",
+        "stock": 15,
+        "active": 1
+    }
+]
