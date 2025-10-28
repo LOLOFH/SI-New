@@ -1,0 +1,114 @@
+===============================
+ Purpose
+===============================
+
+Imports product files (.csv or .json) from incoming/ 
+into the database (products table) using UPSERT (Insert or Update).
+
+
+----------------
+ Folders & Logging
+----------------
+Uses folders (created if missing):
+  • incoming/
+  • processed/
+  • error/
+  • logs/
+
+Log file:
+  → logs/importer-YYYYMMDD.log
+
+
+----------------
+ Input Files
+----------------
+Allowed formats:
+  • *.csv  → semicolon-separated (;)
+  • *.json
+
+CSV:
+  • First line = header
+  • Keys are lowercased & trimmed
+
+JSON:
+  • Expected: array of objects
+
+
+----------------
+ Required Fields per Row
+----------------
+  • erp_id
+  • name
+  • price
+
+If any is missing → raises an exception with line number.
+
+
+----------------
+ Row Normalization (normalizeRow)
+----------------
+Rules:
+  • Keys → lowercase
+  • price:
+      - Replace ',' with '.'
+      - Must be numeric → format 1234.56
+
+Defaults:
+  • description → '' (empty)
+  • stock → null  
+    (updated only if provided; otherwise unchanged)
+  • active → null  
+    (same behavior)
+
+
+----------------
+ Database Access (with Transaction)
+----------------
+upsertProduct() checks erp_id existence:
+
+  UPDATE:
+    - Always sets: name, description, price
+    - Sets stock/active only if provided (not null)
+
+  INSERT:
+    - Sets all fields
+    - Defaults: stock = 0, active = 1
+
+Each row runs inside:
+  BEGIN … COMMIT  
+  → on error: ROLLBACK
+
+
+----------------
+ Processing Workflow
+----------------
+1. Collect all files in incoming/ (only *.csv and *.json)
+2. Parse file → iterate over rows
+3. For each row:
+     - normalize
+     - perform upsert
+     - increment ok / err counters
+4. After processing:
+     - No errors → move file to processed/
+     - Any row errors → write error list to error/<file>.errors.txt, move file to error/
+     - Fatal error (e.g. parser failure) → write error/<file>.fatal.txt, move file to error/
+
+
+----------------
+ Error Handling (Where & How)
+----------------
+• Parser errors (CSV/JSON) → fatal for the entire file  
+• Row errors (missing field / invalid price / DB issue) → only that row counts as error  
+• Every exception is logged  
+• Result summary per file:  
+    imported: X  
+    errors:   Y
+
+
+----------------
+ Important Details
+----------------
+• CSV delimiter is ';'  
+• Header is lowercased → input key case-insensitive  
+• During UPDATE, stock/active remain unchanged 
+  if missing in the import row → supports “partial updates”
