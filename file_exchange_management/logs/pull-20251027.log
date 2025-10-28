@@ -1,0 +1,15 @@
+[2025-10-27 18:14:04] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-27 18:14:04] Using endpoint: http://localhost:4004/rest/api/products (items=2)
+[2025-10-27 18:14:04] Wrote file: /Users/lorentlimani/SI-New/file_exchange_management/incoming/products-20251027-181404.json (records=2)
+[2025-10-27 18:15:49] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-27 18:15:49] Using endpoint: http://localhost:4004/rest/api/products (items=2)
+[2025-10-27 18:15:49] Wrote file: /Users/lorentlimani/SI-New/file_exchange_management/incoming/products-20251027-181549.json (records=2)
+[2025-10-27 18:22:08] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-27 18:22:08] Using endpoint: http://localhost:4004/rest/api/products (items=2)
+[2025-10-27 18:22:08] Wrote file: /Users/lorentlimani/SI-New/file_exchange_management/incoming/products-20251027-182208.json (records=2)
+[2025-10-27 18:23:10] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-27 18:23:10] Using endpoint: http://localhost:4004/rest/api/products (items=2)
+[2025-10-27 18:23:10] Wrote file: /Users/lorentlimani/SI-New/file_exchange_management/incoming/products-20251027-182310.json (records=2)
+[2025-10-27 18:26:48] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-27 18:26:48] Using endpoint: http://localhost:4004/rest/api/products (items=2)
+[2025-10-27 18:26:48] Wrote file: /Users/lorentlimani/SI-New/file_exchange_management/incoming/products-20251027-182648.json (records=2)

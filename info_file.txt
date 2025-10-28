@@ -24,9 +24,3 @@ Not a technical error, but needs business rules
 – Robust: timeouts, validation, logging, rollback
 – Optional: stricter validation + alerting
 
-Conclusion
-Core requirements are fulfilled.
-“Nice to have”: scheduled automation + deactivation logic
- for no-longer-present ERP products.
-
- Update DB watch db.txt last phrase!!!
