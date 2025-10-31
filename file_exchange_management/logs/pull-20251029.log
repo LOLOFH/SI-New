@@ -1,0 +1,31 @@
+[2025-10-29 12:08:32] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-29 12:08:32] Using endpoint: http://localhost:4004/rest/api/products (items=2)
+[2025-10-29 12:08:32] Wrote file: /Users/lorentlimani/SI-New/file_exchange_management/incoming/products-20251029-120832.json (records=2)
+[2025-10-29 13:13:36] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-29 13:13:36] Using endpoint: http://localhost:4004/rest/api/products (items=3)
+[2025-10-29 13:13:36] Wrote file: /Users/lorentlimani/SI-New/file_exchange_management/incoming/products-20251029-131336.json (records=3)
+[2025-10-29 13:14:33] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-29 13:14:33] Using endpoint: http://localhost:4004/rest/api/products (items=4)
+[2025-10-29 13:14:33] Wrote file: /Users/lorentlimani/SI-New/file_exchange_management/incoming/products-20251029-131433.json (records=4)
+[2025-10-29 13:25:30] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-29 13:25:30] Using endpoint: http://localhost:4004/rest/api/products (items=4)
+[2025-10-29 13:25:30] Wrote file: /Users/lorentlimani/SI-New/file_exchange_management/incoming/products-20251029-132530.json (records=4)
+[2025-10-29 13:34:18] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-29 13:34:18] Using endpoint: http://localhost:4004/rest/api/products (items=4)
+[2025-10-29 13:34:18] Wrote file: /Users/lorentlimani/SI-New/file_exchange_management/incoming/products-20251029-133418.json (records=4)
+[2025-10-29 13:38:34] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-29 13:38:34] Using endpoint: http://localhost:4004/rest/api/products (items=5)
+[2025-10-29 13:38:34] Skip row (missing fields): {"ID":"969dfcc7-598b-4756-bbad-c1bbf6fec84d","productID":"43434","name":null,"description":"ddd","price":3,"currency":null,"stock":0}
+[2025-10-29 13:38:34] Wrote file: /Users/lorentlimani/SI-New/file_exchange_management/incoming/products-20251029-133834.json (records=4)
+[2025-10-29 13:45:30] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-29 13:45:30] Using endpoint: http://localhost:4004/rest/api/products (items=5)
+[2025-10-29 13:45:30] Skip row (missing fields): {"ID":"969dfcc7-598b-4756-bbad-c1bbf6fec84d","productID":"43434","name":null,"description":"ddd","price":3,"currency":null,"stock":0}
+[2025-10-29 13:45:30] Wrote file: /Users/lorentlimani/SI-New/file_exchange_management/incoming/products-20251029-134530.json (records=4)
+[2025-10-29 13:45:32] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-29 13:45:32] Using endpoint: http://localhost:4004/rest/api/products (items=5)
+[2025-10-29 13:45:32] Skip row (missing fields): {"ID":"969dfcc7-598b-4756-bbad-c1bbf6fec84d","productID":"43434","name":null,"description":"ddd","price":3,"currency":null,"stock":0}
+[2025-10-29 13:45:32] Wrote file: /Users/lorentlimani/SI-New/file_exchange_management/incoming/products-20251029-134532.json (records=4)
+[2025-10-29 14:24:12] Trying REST: http://localhost:4004/rest/api/products
+[2025-10-29 14:24:12] Using endpoint: http://localhost:4004/rest/api/products (items=6)
+[2025-10-29 14:24:12] Skip row (missing fields): {"ID":"969dfcc7-598b-4756-bbad-c1bbf6fec84d","productID":"43434","name":null,"description":"ddd","price":3,"currency":null,"stock":0}
+[2025-10-29 14:24:12] Wrote file: /Users/lorentlimani/SI-New/file_exchange_management/incoming/products-20251029-142412.json (records=5)

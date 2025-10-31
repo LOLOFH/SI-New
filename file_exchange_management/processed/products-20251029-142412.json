@@ -1,0 +1,42 @@
+[
+    {
+        "erp_id": "DXTR1000",
+        "name": "MTB",
+        "description": "",
+        "price": "1200.00",
+        "stock": 25,
+        "active": 1
+    },
+    {
+        "erp_id": "GRVL1000",
+        "name": "Gravel",
+        "description": "",
+        "price": "2300.00",
+        "stock": 15,
+        "active": 1
+    },
+    {
+        "erp_id": "Dickes Bike ",
+        "name": "Lorents Bike",
+        "description": "Super",
+        "price": "150.00",
+        "stock": 100,
+        "active": 1
+    },
+    {
+        "erp_id": "01029",
+        "name": "Zubairs Car",
+        "description": "Zubair Car",
+        "price": "1000.00",
+        "stock": 1000,
+        "active": 1
+    },
+    {
+        "erp_id": "234566",
+        "name": "T Sneaker",
+        "description": "Toms Sneaker",
+        "price": "150.00",
+        "stock": 100,
+        "active": 1
+    }
+]
