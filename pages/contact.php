@@ -1,8 +1,8 @@
 <?php include '../header.php'; ?>
 
 <div class="card">
-    <h2>Kontakt</h2>
-    <p>Haben Sie Fragen? Kontaktieren Sie uns gerne!</p>
+    <h2>Contact</h2>
+    <p>Have questions? Feel free to contact us!</p>
     
     <form method="POST" class="contact-form">
         <div class="form-group">
@@ -11,21 +11,21 @@
         </div>
         
         <div class="form-group">
-            <label for="email">E-Mail:</label>
+            <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
         </div>
         
         <div class="form-group">
-            <label for="subject">Betreff:</label>
+            <label for="subject">Subject:</label>
             <input type="text" id="subject" name="subject" required>
         </div>
         
         <div class="form-group">
-            <label for="message">Nachricht:</label>
+            <label for="message">Message:</label>
             <textarea id="message" name="message" rows="6" required></textarea>
         </div>
         
-        <button type="submit" class="btn btn-primary">Nachricht senden</button>
+        <button type="submit" class="btn btn-primary">Send message</button>
     </form>
 </div>
 

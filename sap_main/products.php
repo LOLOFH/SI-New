@@ -5,7 +5,7 @@ require_once __DIR__ . '/ErpClient.php';
 require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../cart_handler.php';
 
-// ERP-Konfiguration anpassen:
+// Adjust ERP configuration:
 $erpBaseUrl = 'http://localhost:4004/rest/api';
 
 // Wenn du (noch) keine Authentifizierung im CAP-Service nutzt:
@@ -20,7 +20,7 @@ $erp = new ErpClient(
     'service-user'
 );
 
-// Verarbeite "Zum Warenkorb hinzufügen" Request
+// Handle "Add to cart" request
 $successMessage = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
     $productID = $_POST['productID'] ?? '';
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
     
     if ($productID && $erpProductUUID && $name && $price > 0) {
         add_to_cart($productID, $erpProductUUID, $name, $price, $currency, $quantity);
-        $successMessage = htmlspecialchars($name) . ' wurde zum Warenkorb hinzugefügt!';
+        $successMessage = htmlspecialchars($name) . ' has been added to your cart!';
     }
 }
 
@@ -41,7 +41,7 @@ try {
     $products = $erp->getProducts();
 } catch (Throwable $e) {
     http_response_code(500);
-    echo "Fehler beim Laden der Produkte aus dem ERP: " . htmlspecialchars($e->getMessage());
+    echo "Error loading products from ERP: " . htmlspecialchars($e->getMessage());
     exit;
 }
 ?>
@@ -54,13 +54,13 @@ try {
 <?php endif; ?>
 
 <div class="card">
-    <h2>📋 Produkte</h2>
-    <p>Wählen Sie ein Produkt und fügen Sie es Ihrem Warenkorb hinzu.</p>
+    <h2>📋 Products</h2>
+    <p>Select a product and add it to your cart.</p>
 </div>
 
 <?php if (empty($products)): ?>
     <div class="card">
-        <p>Keine Produkte im ERP gefunden.</p>
+        <p>No products found in ERP.</p>
     </div>
 <?php else: ?>
     <div class="grid">
@@ -83,14 +83,14 @@ try {
             
             <div class="product-stock">
                 <?php if ($inStock): ?>
-                    <span class="stock-available">✓ Verfügbar (<?php echo $stock; ?> Stück)</span>
+                    <span class="stock-available">✓ Available (<?php echo $stock; ?> in stock)</span>
                 <?php else: ?>
-                    <span class="stock-unavailable">✗ Nicht verfügbar</span>
+                    <span class="stock-unavailable">✗ Not available</span>
                 <?php endif; ?>
             </div>
             
             <?php if ($inStock): ?>
-                <!-- Zum Warenkorb hinzufügen -->
+                <!-- Add to cart -->
                 <form method="post" class="product-form">
                     <input type="hidden" name="add_to_cart" value="1">
                     <input type="hidden" name="productID" value="<?php echo htmlspecialchars($p['productID']); ?>">
@@ -100,7 +100,7 @@ try {
                     <input type="hidden" name="currency" value="<?php echo htmlspecialchars($currency); ?>">
                     
                     <div class="form-group" style="margin-bottom:12px;">
-                        <label for="qty-<?php echo htmlspecialchars($p['productID']); ?>" style="display:inline-block;margin-right:8px;margin-bottom:0;">Menge:</label>
+                        <label for="qty-<?php echo htmlspecialchars($p['productID']); ?>" style="display:inline-block;margin-right:8px;margin-bottom:0;">Quantity:</label>
                         <input type="number"
                                id="qty-<?php echo htmlspecialchars($p['productID']); ?>"
                                name="quantity"
@@ -111,12 +111,12 @@ try {
                     </div>
                     
                     <button type="submit" class="add-to-cart-btn">
-                        🛒 Zum Warenkorb hinzufügen
+                        🛒 Add to cart
                     </button>
                 </form>
             <?php else: ?>
                 <button type="button" class="add-to-cart-btn" disabled style="background:#9ca3af;cursor:not-allowed;">
-                    Nicht verfügbar
+                    Not available
                 </button>
             <?php endif; ?>
         </div>

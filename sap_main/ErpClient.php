@@ -2,14 +2,14 @@
 // ErpClient.php
 
 /**
- * Client für den SimpleERPApi-Service (/rest/api) mit Basic Auth.
+ * Client for the SimpleERPApi service (/rest/api) with Basic Auth.
  *
- * Erwartete Endpoints (CAP-Service SimpleERPApi):
+ * Expected endpoints (CAP service SimpleERPApi):
  *   GET  /rest/api/products
  *   GET  /rest/api/customers
  *   POST /rest/api/createOrder (action createOrder(order : Orders))
  *
- * Beispiel-Initialisierung:
+ * Example initialization:
  *   $erp = new ErpClient(
  *       'http://localhost:4004/rest/api',
  *       'service-user',
@@ -28,8 +28,8 @@ class ErpClient
      * @param string      $baseUrl      Basis-URL des REST-Services, z.B. 'http://localhost:4004/rest/api'
      * @param string|null $username     Basic-Auth Benutzername (z.B. 'service-user')
      * @param string|null $password     Basic-Auth Passwort (z.B. 'service-user')
-     * @param int         $maxRetries   Anzahl der Versuche bei Fehlern (Netzwerk/5xx)
-     * @param int         $retryDelayMs Wartezeit zwischen Retries in Millisekunden
+    * @param int         $maxRetries   Number of attempts on errors (network / 5xx)
+    * @param int         $retryDelayMs Wait time between retries in milliseconds
      */
     public function __construct(
         string $baseUrl,
@@ -46,7 +46,7 @@ class ErpClient
     }
 
     /**
-     * Zentrale HTTP-Methode mit Retry (bei Netzwerkfehlern & 5xx).
+     * Central HTTP method with retry (for network errors & 5xx responses).
      *
      * @return array{status:int,body:string}
      * @throws \RuntimeException
@@ -73,7 +73,7 @@ class ErpClient
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 10); // Sekunden
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10); // seconds
 
             // Basic Auth
             if ($this->username !== null && $this->password !== null) {
@@ -92,7 +92,7 @@ class ErpClient
 
             curl_close($ch);
 
-            // Netzwerkfehler -> Retry
+            // Network error -> retry
             if ($curlErrNo !== 0) {
                 if ($attempt < $this->maxRetries) {
                     usleep($this->retryDelayMs * 1000);
@@ -104,13 +104,13 @@ class ErpClient
                 );
             }
 
-            // 5xx vom Server -> Retry
+            // 5xx from server -> retry
             if ($statusCode >= 500 && $statusCode < 600 && $attempt < $this->maxRetries) {
                 usleep($this->retryDelayMs * 1000);
                 continue;
             }
 
-            // Erfolg oder nicht-retry-barer Fehler
+            // Success or non-retriable error
             return [
                 'status' => $statusCode,
                 'body'   => $responseBody,
@@ -120,21 +120,21 @@ class ErpClient
         throw new RuntimeException("ERP request failed after {$this->maxRetries} attempts.");
     }
 
-    /* ---------- Produkte ---------- */
+    /* ---------- Products ---------- */
 
     /**
-     * Liefert alle Produkte aus dem ERP.
+     * Returns all products from the ERP.
      *
-     * Erwartete Struktur pro Produkt:
+     * Expected structure per product:
      *   [
      *     'productID'     => string,
      *     'name'          => string,
      *     'description'   => string|null,
      *     'price'         => float,
-     *     'currency'      => string(3)        // oder 'currency_code'
+     *     'currency'      => string(3)        // or 'currency_code'
      *     'currency_code' => string(3),
      *     'stock'         => int,
-     *     'ID'            => string(UUID)     // interne ERP-UUID für createOrder
+     *     'ID'            => string(UUID)     // internal ERP UUID for createOrder
      *   ]
      *
      * @return array<int,array<string,mixed>>
@@ -152,8 +152,8 @@ class ErpClient
     }
 
     /**
-     * Produkt anhand der ProductID (z.B. "P-1001") finden.
-     * Nutzt /products und filtert in PHP.
+     * Find a product by ProductID (e.g. "P-1001").
+     * Uses /products and filters in PHP.
      *
      * @return array<string,mixed>|null
      * @throws \RuntimeException
@@ -170,8 +170,8 @@ class ErpClient
     }
 
     /**
-     * Liefert den aktuellen Lagerbestand zu einer ProductID.
-     * Gibt null zurück, falls das Produkt nicht existiert.
+     * Returns current stock for a ProductID.
+     * Returns null if the product does not exist.
      *
      * @throws \RuntimeException
      */
@@ -184,12 +184,12 @@ class ErpClient
         return isset($product['stock']) ? (int)$product['stock'] : null;
     }
 
-    /* ---------- Kunden ---------- */
+    /* ---------- Customers ---------- */
 
     /**
-     * Liefert alle Kunden aus dem ERP.
+     * Returns all customers from the ERP.
      *
-     * Struktur pro Kunde (SimpleERPApi.Customers):
+     * Structure per customer (SimpleERPApi.Customers):
      *   [
      *     'customerID'  => string(UUID),
      *     'name'        => string,
@@ -216,8 +216,8 @@ class ErpClient
     }
 
     /**
-     * Kunde anhand E-Mail finden.
-     * Voraussetzung: Kunden sind im ERP angelegt (inkl. Name/Adresse).
+     * Find customer by email.
+     * Prerequisite: customers exist in the ERP (including name/address).
      *
      * @return array<string,mixed>|null
      * @throws \RuntimeException
@@ -233,12 +233,12 @@ class ErpClient
         return null;
     }
 
-    /* ---------- Bestellungen ---------- */
+    /* ---------- Orders ---------- */
 
     /**
-     * Order im ERP anlegen (action createOrder(order : Orders)).
+    * Create an order in the ERP (action createOrder(order : Orders)).
      *
-     * Order-Typ in der API:
+    * Order type in the API:
      *   orderID     : Integer;
      *   customer    : UUID;
      *   orderDate   : Date;
@@ -247,14 +247,14 @@ class ErpClient
      *   orderStatus : Integer;
      *   items       : many OrderItems;
      *
-     * OrderItems:
+    * OrderItems:
      *   itemID     : Integer;
      *   product    : UUID;
      *   quantity   : Integer;
      *   itemAmount : Decimal(10,2);
      *   currency   : String(3);
      *
-     * @param string $customerId ERP-Customer UUID (Customers.customerID)
+    * @param string $customerId ERP customer UUID (Customers.customerID)
      * @param array  $items      Array von Positionen:
      *                           [
      *                             [
@@ -267,15 +267,15 @@ class ErpClient
      *                           ]
      * @param string $currency   Bestellwährung, z.B. "EUR"
      *
-     * @return array{status:int,body:string}
-     *         status: HTTP-Statuscode (z.B. 204 bei Erfolg,
-     *                 409 bei Konflikt wie zu wenig Bestand, 4xx/5xx bei Fehlern)
+    * @return array{status:int,body:string}
+    *         status: HTTP status code (e.g. 204 on success,
+    *                 409 on conflict like insufficient stock, 4xx/5xx on errors)
      *
-     * @throws \RuntimeException
+    * @throws \RuntimeException
      */
     public function createOrder(string $customerId, array $items, string $currency = 'EUR'): array
     {
-        // Gesamtbetrag berechnen
+        // Calculate total amount
         $orderAmount = 0.0;
         foreach ($items as $item) {
             $orderAmount += (float)$item['itemAmount'];

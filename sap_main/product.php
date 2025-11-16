@@ -29,14 +29,14 @@ try {
 
     $inStock = isset($product['stock']) && $product['stock'] > 0;
 } catch (Throwable $e) {
-    // Fehler beim RPC – hier keine veralteten Daten verwenden
+    // Error during RPC – do not use stale data here
     http_response_code(500);
     echo "Error contacting ERP: " . htmlspecialchars($e->getMessage());
     exit;
 }
 ?>
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title><?php echo htmlspecialchars($product['name']); ?></title>
@@ -44,10 +44,10 @@ try {
 <body>
     <h1><?php echo htmlspecialchars($product['name']); ?></h1>
     <p><?php echo nl2br(htmlspecialchars($product['description'] ?? '')); ?></p>
-    <p>Preis: <?php echo htmlspecialchars($product['price'] . ' ' . $product['currency']); ?></p>
+    <p>Price: <?php echo htmlspecialchars($product['price'] . ' ' . $product['currency']); ?></p>
 
     <p>
-        Lagerbestand:
+        Stock:
         <?php if ($inStock): ?>
             <strong style="color:green;">in stock (<?php echo (int)$product['stock']; ?>)</strong>
         <?php else: ?>
@@ -61,10 +61,10 @@ try {
             <input type="hidden" name="erpProductUUID" value="<?php echo htmlspecialchars($product['ID']); ?>">
             <input type="hidden" name="price" value="<?php echo htmlspecialchars($product['price']); ?>">
             <input type="number" name="quantity" min="1" max="<?php echo (int)$product['stock']; ?>" value="1">
-            <button type="submit">Jetzt kaufen</button>
+            <button type="submit">Buy now</button>
         </form>
     <?php else: ?>
-        <p>Dieses Produkt ist aktuell nicht verfügbar.</p>
+        <p>This product is currently unavailable.</p>
     <?php endif; ?>
 </body>
 </html>

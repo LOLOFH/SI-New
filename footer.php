@@ -1,7 +1,7 @@
 </main>
 <footer class="footer-main">
     <div class="footer-container">
-        <small>© <?php echo date('Y'); ?> PHP Webshop | <a href="/index.php">Startseite</a> | <a href="/sap_main/products.php">Produkte</a> | <a href="/pages/contact.php">Kontakt</a></small>
+        <small>© <?php echo date('Y'); ?> PHP Shop | <a href="/index.php">Home</a> | <a href="/sap_main/products.php">Products</a> | <a href="/pages/contact.php">Contact</a></small>
     </div>
 </footer>
 </body>

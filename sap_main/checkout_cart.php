@@ -1,11 +1,11 @@
 <?php
-// checkout_cart.php - Checkout aus dem Warenkorb
+// checkout_cart.php - Checkout from the cart
 
 require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../cart_handler.php';
 require_once __DIR__ . '/ErpClient.php';
 
-// ERP-Client initialisieren
+// Initialize ERP client
 $erp = new ErpClient(
     'http://localhost:4004/rest/api',
     'service-user',
@@ -15,37 +15,37 @@ $erp = new ErpClient(
 $cart = get_cart();
 $cartTotal = get_cart_total();
 
-// Wenn Warenkorb leer ist, redirect
+// If the cart is empty, redirect
 if (empty($cart)) {
     header('Location: /cart.php');
     exit;
 }
 
-// Hole Kunden aus ERP
+// Fetch customers from ERP
 $customers = [];
 try {
     $customers = $erp->getCustomers();
 } catch (Throwable $e) {
-    // Fehler wird später angezeigt
+    // Error will be shown later
 }
 
-// POST - Bestellung verarbeiten
+// POST - process order
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $customerEmail = trim($_POST['customerEmail'] ?? '');
     
     if (!$customerEmail) {
-        $error = 'Bitte einen Kunden auswählen.';
+        $error = 'Please select a customer.';
     } else {
         try {
-            // Kunde suchen
+            // Find customer
             $customer = $erp->findCustomerByEmail($customerEmail);
             if (!$customer) {
-                throw new RuntimeException("Kunde nicht gefunden.");
+                throw new RuntimeException("Customer not found.");
             }
             
             $customerId = $customer['customerID'];
             
-            // Bestellpositionen vorbereiten
+            // Prepare order items
             $items = [];
             foreach ($cart as $cartItem) {
                 $items[] = [
@@ -56,12 +56,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ];
             }
             
-            // Bestellung im ERP erstellen
+            // Create order in the ERP
             $orderResponse = $erp->createOrder($customerId, $items, 'EUR');
             $status = $orderResponse['status'];
             
             if ($status >= 200 && $status < 300) {
-                // Erfolg - Warenkorb leeren und weiterleiten
+                // Success - clear cart and redirect
                 clear_cart();
                 $_SESSION['orderSuccess'] = true;
                 $_SESSION['orderTotal'] = $cartTotal;
@@ -70,10 +70,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header('Location: /checkout_success.php');
                 exit;
             } else {
-                $error = 'Fehler beim Erstellen der Bestellung (HTTP ' . $status . ')';
+                $error = 'Error creating order (HTTP ' . $status . ')';
             }
         } catch (Throwable $e) {
-            $error = 'Fehler: ' . htmlspecialchars($e->getMessage());
+            $error = 'Error: ' . htmlspecialchars($e->getMessage());
         }
     }
 }
@@ -82,26 +82,26 @@ include '../header.php';
 ?>
 
 <div class="card">
-    <h2>💳 Bestellung abschließen</h2>
-    <p>Überprüfen Sie Ihre Bestellung und geben Sie einen Kunden an.</p>
+    <h2>💳 Complete Order</h2>
+    <p>Review your order and select a customer.</p>
 </div>
 
 <?php if (isset($error)): ?>
     <div class="card flash flash-err">
-        <strong>⚠ Fehler:</strong> <?php echo $error; ?>
+        <strong>⚠ Error:</strong> <?php echo $error; ?>
     </div>
 <?php endif; ?>
 
-<!-- Warenkorb-Übersicht -->
+<!-- Cart overview -->
 <div class="card">
-    <h3>📦 Ihre Artikel</h3>
+    <h3>📦 Your Items</h3>
     <table class="cart-table">
         <thead>
             <tr>
-                <th>Produkt</th>
-                <th>Preis</th>
-                <th>Menge</th>
-                <th>Gesamtbetrag</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
             </tr>
         </thead>
         <tbody>
@@ -115,25 +115,25 @@ include '../header.php';
                 </tr>
             <?php endforeach; ?>
             <tr style="background:#f3f4f6;font-weight:700;">
-                <td colspan="3" style="text-align:right;">Gesamtbetrag:</td>
+                <td colspan="3" style="text-align:right;">Total:</td>
                 <td><?php echo number_format($cartTotal, 2, ',', '.') . ' EUR'; ?></td>
             </tr>
         </tbody>
     </table>
 </div>
 
-<!-- Kundenauswahl -->
+<!-- Customer selection -->
 <div class="card" style="max-width:600px;">
-    <h3>👤 Kunde auswählen</h3>
+    <h3>👤 Select Customer</h3>
     
     <?php if (empty($customers)): ?>
-        <p class="flash flash-err">Es sind keine Kunden im ERP vorhanden. Bitte zuerst Kunden im ERP anlegen.</p>
+        <p class="flash flash-err">No customers found in the ERP. Please create customers in the ERP first.</p>
     <?php else: ?>
         <form method="post">
             <div class="form-group">
-                <label for="customerEmail">Kunde (E-Mail):</label>
+                <label for="customerEmail">Customer (Email):</label>
                 <select name="customerEmail" id="customerEmail" required>
-                    <option value="">-- Bitte wählen --</option>
+                    <option value="">-- Please choose --</option>
                     <?php foreach ($customers as $c): ?>
                         <?php
                             $email = $c['email'] ?? '';
@@ -149,20 +149,20 @@ include '../header.php';
             
             <div style="display:flex;gap:12px;margin-top:24px;">
                 <a href="/cart.php" class="btn btn-link" style="text-decoration:none;">
-                    ← Zurück zum Warenkorb
+                    ← Back to cart
                 </a>
                 <button type="submit" class="btn btn-primary" style="flex:1;">
-                    ✓ Bestellung abschließen
+                    ✓ Place Order
                 </button>
             </div>
 
-            <!-- Einklappbarer Bereich: neuer Kunde anlegen (konzeptionell) -->
+            <!-- Collapsible section: create new customer (conceptual) -->
             <details class="details-section" style="margin-top:24px;padding:12px;border:1px solid #e5e7eb;border-radius:6px;">
-                <summary style="cursor:pointer;font-weight:600;padding:6px 0;">➕ Neuen Kunden anlegen (Konzept für zukünftige Implementierung)</summary>
+                <summary style="cursor:pointer;font-weight:600;padding:6px 0;">➕ Create new customer (concept for future implementation)</summary>
                 <div style="margin-top:12px;padding:12px;background:#f9fafb;border-radius:4px;font-size:14px;">
                     <p style="color:#666;margin:0 0 12px 0;">
-                        Diese Sektion zeigt das zukünftige Konzept zum Anlegen neuer Kunden direkt im Webshop.
-                        Aktuell ist die Auswahl eines bestehenden Kunden erforderlich.
+                        This section shows the future concept for creating new customers directly in the webshop.
+                        At the moment selecting an existing customer is required.
                     </p>
                     <div class="form-group">
                         <label for="newCustomerName">Name:</label>
@@ -173,29 +173,29 @@ include '../header.php';
                         <input type="email" id="newCustomerEmail" name="newCustomerEmail">
                     </div>
                     <div class="form-group">
-                        <label for="newStreet">Straße:</label>
+                        <label for="newStreet">Street:</label>
                         <input type="text" id="newStreet" name="newStreet">
                     </div>
                     <div class="form-group">
-                        <label for="newHouseNumber">Hausnummer:</label>
+                        <label for="newHouseNumber">House number:</label>
                         <input type="text" id="newHouseNumber" name="newHouseNumber">
                     </div>
                     <div class="form-group">
-                        <label for="newPostalCode">PLZ:</label>
+                        <label for="newPostalCode">Postal Code:</label>
                         <input type="text" id="newPostalCode" name="newPostalCode">
                     </div>
                     <div class="form-group">
-                        <label for="newCity">Stadt:</label>
+                        <label for="newCity">City:</label>
                         <input type="text" id="newCity" name="newCity">
                     </div>
                     <div class="form-group">
-                        <label for="newCountry">Land/Region (ISO-3):</label>
+                        <label for="newCountry">Country/Region (ISO-3):</label>
                         <input type="text" id="newCountry" name="newCountry" value="DEU">
                     </div>
                     <p style="color:#666;margin:12px 0 0 0;font-size:13px;">
-                        Aktuell werden diese Felder noch nicht über eine API ins ERP geschrieben.
-                        Sobald eine <code>createCustomer</code>-Action implementiert ist, könnte hier
-                        automatisch ein neuer ERP-Kunde angelegt und anschließend für die Bestellung verwendet werden.
+                        These fields are not currently written to the ERP via an API.
+                        Once a <code>createCustomer</code> action is implemented, a new ERP customer
+                        could be created here and used for the order.
                     </p>
                 </div>
             </details>
