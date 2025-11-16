@@ -1,18 +1,18 @@
 <?php
 /**
- * cart_handler.php - Warenkorb-Verwaltung
- * Zentrale Stelle für alle Warenkorb-Operationen
+ * cart_handler.php - Cart management
+ * Central place for all cart operations
  */
 
 require_once __DIR__ . '/session.php';
 
-// Warenkorb initialisieren
+// Initialize cart
 if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
 /**
- * Artikel zum Warenkorb hinzufügen
+ * Add an item to the cart
  */
 function add_to_cart($productID, $erpProductUUID, $name, $price, $currency, $quantity = 1) {
     if (!isset($_SESSION['cart'])) {
@@ -22,7 +22,7 @@ function add_to_cart($productID, $erpProductUUID, $name, $price, $currency, $qua
     $quantity = (int)$quantity;
     if ($quantity <= 0) $quantity = 1;
     
-    // Prüfe, ob Produkt bereits im Warenkorb
+    // Check if product is already in the cart
     $found = false;
     foreach ($_SESSION['cart'] as &$item) {
         if ($item['productID'] === $productID) {
@@ -32,7 +32,7 @@ function add_to_cart($productID, $erpProductUUID, $name, $price, $currency, $qua
         }
     }
     
-    // Wenn nicht gefunden, neuen Artikel hinzufügen
+    // If not found, add a new item
     if (!$found) {
         $_SESSION['cart'][] = [
             'productID' => $productID,
@@ -49,7 +49,7 @@ function add_to_cart($productID, $erpProductUUID, $name, $price, $currency, $qua
 }
 
 /**
- * Artikel aus dem Warenkorb entfernen
+ * Remove an item from the cart
  */
 function remove_from_cart($productID) {
     if (!isset($_SESSION['cart'])) return false;
@@ -57,7 +57,7 @@ function remove_from_cart($productID) {
     foreach ($_SESSION['cart'] as $key => $item) {
         if ($item['productID'] === $productID) {
             unset($_SESSION['cart'][$key]);
-            $_SESSION['cart'] = array_values($_SESSION['cart']); // Reindexieren
+            $_SESSION['cart'] = array_values($_SESSION['cart']); // Reindex
             return true;
         }
     }
@@ -65,7 +65,7 @@ function remove_from_cart($productID) {
 }
 
 /**
- * Menge eines Artikels aktualisieren
+ * Update the quantity of an item
  */
 function update_cart_quantity($productID, $quantity) {
     if (!isset($_SESSION['cart'])) return false;
@@ -85,7 +85,7 @@ function update_cart_quantity($productID, $quantity) {
 }
 
 /**
- * Warenkorb leeren
+ * Clear the cart
  */
 function clear_cart() {
     $_SESSION['cart'] = [];
@@ -93,7 +93,7 @@ function clear_cart() {
 }
 
 /**
- * Warenkorb abrufen
+ * Get the cart
  */
 function get_cart() {
     if (!isset($_SESSION['cart'])) {
@@ -103,7 +103,7 @@ function get_cart() {
 }
 
 /**
- * Anzahl der Artikel im Warenkorb
+ * Number of items in the cart
  */
 function get_cart_count() {
     $cart = get_cart();
@@ -115,7 +115,7 @@ function get_cart_count() {
 }
 
 /**
- * Gesamtsumme des Warenkorbs berechnen
+ * Calculate the cart total
  */
 function get_cart_total() {
     $cart = get_cart();
@@ -127,7 +127,7 @@ function get_cart_total() {
 }
 
 /**
- * Anzahl unterschiedlicher Produkte
+ * Number of distinct products
  */
 function get_cart_items_count() {
     return count(get_cart());
