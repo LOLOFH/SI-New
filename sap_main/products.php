@@ -2,6 +2,8 @@
 // products.php
 
 require_once __DIR__ . '/ErpClient.php';
+require_once __DIR__ . '/../session.php';
+require_once __DIR__ . '/../cart_handler.php';
 
 // ERP-Konfiguration anpassen:
 $erpBaseUrl = 'http://localhost:4004/rest/api';
@@ -18,6 +20,21 @@ $erp = new ErpClient(
     'service-user'
 );
 
+// Verarbeite "Zum Warenkorb hinzufügen" Request
+$successMessage = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
+    $productID = $_POST['productID'] ?? '';
+    $erpProductUUID = $_POST['erpProductUUID'] ?? '';
+    $name = $_POST['product_name'] ?? '';
+    $price = $_POST['price'] ?? 0;
+    $currency = $_POST['currency'] ?? 'EUR';
+    $quantity = $_POST['quantity'] ?? 1;
+    
+    if ($productID && $erpProductUUID && $name && $price > 0) {
+        add_to_cart($productID, $erpProductUUID, $name, $price, $currency, $quantity);
+        $successMessage = htmlspecialchars($name) . ' wurde zum Warenkorb hinzugefügt!';
+    }
+}
 
 // Echtzeit aus ERP laden (ERP = Single Source of Truth)
 try {
@@ -28,81 +45,83 @@ try {
     exit;
 }
 ?>
-<!doctype html>
-<html lang="de">
-<head>
-    <meta charset="utf-8">
-    <title>Produktübersicht</title>
-    <style>
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ccc; padding: 6px 8px; }
-        th { background: #eee; }
-        .instock { color: green; font-weight: bold; }
-        .outofstock { color: red; font-weight: bold; }
-        form { margin: 0; }
-    </style>
-</head>
-<body>
-    <h1>Produkte</h1>
+<?php include '../header.php'; ?>
 
-    <?php if (empty($products)): ?>
+<?php if ($successMessage): ?>
+    <div class="card flash flash-ok" style="margin-top:0;">
+        <strong>✓ Erfolg:</strong> <?php echo $successMessage; ?>
+    </div>
+<?php endif; ?>
+
+<div class="card">
+    <h2>📋 Produkte</h2>
+    <p>Wählen Sie ein Produkt und fügen Sie es Ihrem Warenkorb hinzu.</p>
+</div>
+
+<?php if (empty($products)): ?>
+    <div class="card">
         <p>Keine Produkte im ERP gefunden.</p>
-    <?php else: ?>
-        <table>
-            <thead>
-                <tr>
-                    <th>Product ID</th>
-                    <th>Name</th>
-                    <th>Beschreibung</th>
-                    <th>Preis</th>
-                    <th>Lager</th>
-                    <th>Bestellen</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($products as $p): ?>
-                <?php
-                    $stock    = (int)($p['stock'] ?? 0);
-                    $inStock  = $stock > 0;
-                    $price    = (float)($p['price'] ?? 0);
-                    // In deinem Service heißt das Feld currency_code:
-                    $currency = $p['currency_code'] ?? ($p['currency'] ?? 'EUR');
-                ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($p['productID']); ?></td>
-                    <td><?php echo htmlspecialchars($p['name']); ?></td>
-                    <td><?php echo htmlspecialchars($p['description'] ?? ''); ?></td>
-                    <td><?php echo number_format($price, 2, ',', '.') . ' ' . htmlspecialchars($currency); ?></td>
-                    <td>
-                        <?php if ($inStock): ?>
-                            <span class="instock">in stock (<?php echo $stock; ?>)</span>
-                        <?php else: ?>
-                            <span class="outofstock">out of stock</span>
-                        <?php endif; ?>
-                    </td>
-                    <td>
-                        <?php if ($inStock): ?>
-                            <!-- Bestellung von dieser Seite starten -->
-                            <form method="get" action="checkout.php">
-                                <input type="hidden" name="productID" value="<?php echo htmlspecialchars($p['productID']); ?>">
-                                <input type="hidden" name="erpProductUUID" value="<?php echo htmlspecialchars($p['ID']); ?>">
-                                <input type="hidden" name="price" value="<?php echo htmlspecialchars($price); ?>">
-                                <input type="number"
-                                       name="quantity"
-                                       min="1"
-                                       max="<?php echo $stock; ?>"
-                                       value="1"
-                                       style="width:60px;">
-                                <button type="submit">Bestellen</button>
-                            </form>
-                        <?php else: ?>
-                            <button type="button" disabled>Nicht verfügbar</button>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php endif; ?>
-</body>
-</html>
+    </div>
+<?php else: ?>
+    <div class="grid">
+    <?php foreach ($products as $p): ?>
+        <?php
+            $stock    = (int)($p['stock'] ?? 0);
+            $inStock  = $stock > 0;
+            $price    = (float)($p['price'] ?? 0);
+            // In deinem Service heißt das Feld currency_code:
+            $currency = $p['currency_code'] ?? ($p['currency'] ?? 'EUR');
+        ?>
+        <div class="product-card">
+            <h3 class="product-name"><?php echo htmlspecialchars($p['name']); ?></h3>
+            
+            <p class="product-description"><?php echo htmlspecialchars($p['description'] ?? ''); ?></p>
+            
+            <div class="product-price">
+                <?php echo number_format($price, 2, ',', '.') . ' ' . htmlspecialchars($currency); ?>
+            </div>
+            
+            <div class="product-stock">
+                <?php if ($inStock): ?>
+                    <span class="stock-available">✓ Verfügbar (<?php echo $stock; ?> Stück)</span>
+                <?php else: ?>
+                    <span class="stock-unavailable">✗ Nicht verfügbar</span>
+                <?php endif; ?>
+            </div>
+            
+            <?php if ($inStock): ?>
+                <!-- Zum Warenkorb hinzufügen -->
+                <form method="post" class="product-form">
+                    <input type="hidden" name="add_to_cart" value="1">
+                    <input type="hidden" name="productID" value="<?php echo htmlspecialchars($p['productID']); ?>">
+                    <input type="hidden" name="erpProductUUID" value="<?php echo htmlspecialchars($p['ID']); ?>">
+                    <input type="hidden" name="product_name" value="<?php echo htmlspecialchars($p['name']); ?>">
+                    <input type="hidden" name="price" value="<?php echo htmlspecialchars($price); ?>">
+                    <input type="hidden" name="currency" value="<?php echo htmlspecialchars($currency); ?>">
+                    
+                    <div class="form-group" style="margin-bottom:12px;">
+                        <label for="qty-<?php echo htmlspecialchars($p['productID']); ?>" style="display:inline-block;margin-right:8px;margin-bottom:0;">Menge:</label>
+                        <input type="number"
+                               id="qty-<?php echo htmlspecialchars($p['productID']); ?>"
+                               name="quantity"
+                               min="1"
+                               max="<?php echo $stock; ?>"
+                               value="1"
+                               style="width:70px;padding:6px;border:1px solid #d1d5db;border-radius:4px;">
+                    </div>
+                    
+                    <button type="submit" class="add-to-cart-btn">
+                        🛒 Zum Warenkorb hinzufügen
+                    </button>
+                </form>
+            <?php else: ?>
+                <button type="button" class="add-to-cart-btn" disabled style="background:#9ca3af;cursor:not-allowed;">
+                    Nicht verfügbar
+                </button>
+            <?php endif; ?>
+        </div>
+    <?php endforeach; ?>
+    </div>
+<?php endif; ?>
+
+<?php include '../footer.php'; ?>
