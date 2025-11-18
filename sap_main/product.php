@@ -3,8 +3,8 @@
 
 require_once __DIR__ . '/ErpClient.php';
 
-// Konfiguration
-$erpBaseUrl = 'https://dein-cap-server:4004/rest/api'; // anpassen
+// ZUM Testen von fehlern !!!!!!!!!!
+$erpBaseUrl = 'http://localhost:4004/rest/api'; // anpassen
 $erpToken   = null;                                    // falls nötig
 
 $erp = new ErpClient($erpBaseUrl, $erpToken);

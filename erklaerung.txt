@@ -1,0 +1,56 @@
+Erklärung der Dateien und ihres Zusammenspiels
+
+1.  Gesamtbild Dein Code bildet einen kleinen Webshop vor einem
+    ERP-System („SimpleERPApi“):
+
+-   ErpClient.php: PHP-Client für das ERP.
+-   products.php: Produktübersicht + Warenkorb hinzufügen.
+-   product.php: Produktdetailseite + Direktkauf.
+-   checkout_cart.php: Checkout für Warenkorb.
+-   checkout.php: Checkout für Einzelprodukt. Weitere Dateien:
+    session.php, cart_handler.php, header.php, footer.php.
+
+2.  ErpClient.php – ERP-Client Aufgaben: Produkte abrufen, Kunden
+    abrufen, Bestellungen anlegen. Zentrale Methode: request() mit curl,
+    Basic-Auth, JSON-Handling, Retry-Logik.
+
+getProducts(): ruft /products auf und gibt ein Array von Produkten
+zurück. getProductByProductId(): filtert aus getProducts() nach
+productID. getStockForProduct(): gibt stock eines Produkts zurück.
+getCustomers(): ruft /customers auf. findCustomerByEmail(): sucht Kunde
+per Email. createOrder(): baut Order-Payload und ruft /createOrder per
+POST auf.
+
+3.  products.php – Produktliste
+
+-   Holt Produkte über ErpClient.
+-   Formular zum Hinzufügen in den Warenkorb.
+-   add_to_cart() aus cart_handler.php füllt Session-Warenkorb.
+
+4.  product.php – Produktdetailseite Teste für fehler
+
+-   Holt ein Produkt nach productID.
+-   Zeigt Details und Formular „Buy now“ für checkout.php.
+
+5.  checkout.php – Einzelprodukt-Checkout GET:
+
+-   Zeigt Formular mit Produktdaten + Kundenliste. POST:
+-   Validierung.
+-   Lagerbestand live checken.
+-   Kunde per Email suchen.
+-   Order-Item erstellen, createOrder() aufrufen.
+-   Erfolgsseite anzeigen.
+
+6.  checkout_cart.php – Warenkorb-Checkout
+
+-   Holt Warenkorb aus Session.
+-   Zeigt Übersicht mit Gesamtsumme. POST:
+-   Kunde auswählen, Items aus Warenkorb übertragen.
+-   Bestellung im ERP erzeugen.
+-   Warenkorb leeren, Weiterleitung zur Success-Seite.
+
+7.  Zusammenspiel products.php → add_to_cart
+    product.php → checkout.php
+    checkout.php → createOrder(1 Item)
+    checkout_cart.php → createOrder(Mehrere Items)
+    ErpClient.php → API-Kommunikation.

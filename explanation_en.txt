@@ -1,0 +1,58 @@
+Explanation of the Files and Their Interaction
+
+1.  Overview Your code implements a small web shop connected to an ERP
+    system (“SimpleERPApi”):
+
+-   ErpClient.php: PHP client for the ERP.
+-   products.php: Product overview + add to cart.
+-   product.php: Product detail page + direct purchase.
+-   checkout_cart.php: Checkout for the shopping cart.
+-   checkout.php: Checkout for a single product. Additional referenced
+    files: session.php, cart_handler.php, header.php, footer.php.
+
+2.  ErpClient.php – ERP Client Responsibilities: Retrieve products,
+    retrieve customers, create orders. Central method: request() using
+    curl, Basic Auth, JSON handling, retry logic.
+
+getProducts(): calls /products and returns an array of products.
+getProductByProductId(): filters getProducts() by productID.
+getStockForProduct(): returns the stock of a product. getCustomers():
+calls /customers. findCustomerByEmail(): searches a customer by email.
+createOrder(): builds the order payload and posts it to /createOrder.
+
+3.  products.php – Product List
+
+-   Loads products via ErpClient.
+-   Provides a form to add products to the shopping cart.
+-   Uses add_to_cart() from cart_handler.php to store cart items in the
+    session.
+
+4.  product.php – Product Detail Page test for errors
+
+-   Loads a single product using productID.
+-   Displays details and provides a “Buy now” form linking to
+    checkout.php.
+
+5.  checkout.php – Single Product Checkout GET:
+
+-   Shows form with product data + customer selection. POST:
+-   Validates input.
+-   Checks stock live from ERP.
+-   Finds customer by email.
+-   Builds order item and calls createOrder().
+-   Shows a success page afterward.
+
+6.  checkout_cart.php – Shopping Cart Checkout
+
+-   Loads cart from the session.
+-   Displays summary including total price. POST:
+-   Customer selection.
+-   Converts cart items into order items.
+-   Creates order in ERP.
+-   Empties cart and redirects to success page.
+
+7.  Interaction Summary products.php → add_to_cart
+    product.php → checkout.php
+    checkout.php → createOrder (single item)
+    checkout_cart.php → createOrder (multiple items)
+    ErpClient.php → Handles all ERP communication.
