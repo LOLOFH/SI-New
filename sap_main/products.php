@@ -2,7 +2,9 @@
 // products.php
 
 require_once __DIR__ . '/ErpClient.php';
-require_once __DIR__ . '/../session.php';
+require_once __DIR__ . "/../session.php";
+
+
 require_once __DIR__ . '/../cart_handler.php';
 
 // Adjust ERP configuration:
@@ -41,7 +43,11 @@ try {
     $products = $erp->getProducts();
 } catch (Throwable $e) {
     http_response_code(500);
-    echo "Error loading products from ERP: " . htmlspecialchars($e->getMessage());
+   // echo "Error loading products from ERP: " . htmlspecialchars($e->getMessage());
+    echo "<script>
+        alert('Error loading products from ERP: " . addslashes($e->getMessage()) . "');
+        window.location.href = '../index.php'; 
+    </script>";
     exit;
 }
 ?>

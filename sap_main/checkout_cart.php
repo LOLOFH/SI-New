@@ -4,8 +4,9 @@
 require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../cart_handler.php';
 require_once __DIR__ . '/ErpClient.php';
+require_once __DIR__ . '/rabbitmq_helper.php';  // NEW for Lab 6
 
-// Initialize ERP client
+// Initialize ERP client (still needed to fetch customers)
 $erp = new ErpClient(
     'http://localhost:4004/rest/api',
     'service-user',
@@ -26,25 +27,25 @@ $customers = [];
 try {
     $customers = $erp->getCustomers();
 } catch (Throwable $e) {
-    // Error will be shown later
+    // Will show error message later
 }
 
 // POST - process order
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $customerEmail = trim($_POST['customerEmail'] ?? '');
-    
+
     if (!$customerEmail) {
         $error = 'Please select a customer.';
     } else {
         try {
-            // Find customer
+            // Find customer by Email
             $customer = $erp->findCustomerByEmail($customerEmail);
             if (!$customer) {
                 throw new RuntimeException("Customer not found.");
             }
-            
+
             $customerId = $customer['customerID'];
-            
+
             // Prepare order items
             $items = [];
             foreach ($cart as $cartItem) {
@@ -55,23 +56,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'currency' => $cartItem['currency']
                 ];
             }
-            
-            // Create order in the ERP
-            $orderResponse = $erp->createOrder($customerId, $items, 'EUR');
-            $status = $orderResponse['status'];
-            
-            if ($status >= 200 && $status < 300) {
-                // Success - clear cart and redirect
+
+            /// Final message for RabbitMQ (only order, no correlationId)
+//$orderMessage = [
+    //'customerEmail' => $customerEmail,
+    //'orderDate'     => date('Y-m-d'),
+    ///'currency'      => 'EUR',
+    //'orderAmount'   => $cartTotal,
+    //'items'         => $items,
+//];
+ $orderAmount = 0.0;
+foreach ($items as $item) {
+    $orderAmount += (float)$item['itemAmount'];
+}
+
+// Build payload exactly as expected by simpleerp-api.js
+// Build payload exactly as expected by Karavan (Lab 6)
+$correlationId = uniqid('order_', true); 
+
+$payload = [
+    'correlationId' => $correlationId, // Critical for tracking
+    'order' => [
+        'customer'    => $customerId,
+        'orderDate'   => date('Y-m-d'),
+        'orderAmount' => $cartTotal,
+        'currency'    => 'EUR',
+        'items'       => []
+    ]
+];
+
+$itemId = 1;
+foreach ($cart as $cartItem) {
+    $payload['order']['items'][] = [
+        'itemID'     => $itemId++,                  // simpleerp-api.js expects 'itemID'
+        'product'    => $cartItem['erpProductUUID'],
+        'quantity'   => (int)$cartItem['quantity'],
+        'itemAmount' => (float)($cartItem['price'] * $cartItem['quantity']),
+        'currency'   => $cartItem['currency'] ?? 'EUR',
+    ];
+}
+
+// Send to RabbitMQ
+$sent = sendOrderMessageToQueue($payload, 'webshop-orders-in');
+
+
+
+            if ($sent) {
                 clear_cart();
                 $_SESSION['orderSuccess'] = true;
                 $_SESSION['orderTotal'] = $cartTotal;
                 $_SESSION['orderItemsCount'] = count($cart);
-                
+
                 header('Location: /checkout_success.php');
                 exit;
             } else {
-                $error = 'Error creating order (HTTP ' . $status . ')';
+                $error = "Order could not be sent to RabbitMQ.";
             }
+
         } catch (Throwable $e) {
             $error = 'Error: ' . htmlspecialchars($e->getMessage());
         }
@@ -80,6 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 include '../header.php';
 ?>
+
 
 <div class="card">
     <h2>💳 Complete Order</h2>
