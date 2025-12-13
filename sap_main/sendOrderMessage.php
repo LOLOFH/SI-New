@@ -34,8 +34,8 @@ function sendOrderMessage(array $order): void
         $channel = $connection->channel();
 
         // 2) Declare queues (durable)
-        $channel->queue_declare($requestQueue, false, false, false, false);
-        $channel->queue_declare($responseQueue, false, false, false, false);
+        $channel->queue_declare($requestQueue, false, true, false, false);
+        $channel->queue_declare($responseQueue, false, true, false, false);
 
         // 3) Convert order to JSON
         $messageBody = json_encode($order, JSON_UNESCAPED_UNICODE);

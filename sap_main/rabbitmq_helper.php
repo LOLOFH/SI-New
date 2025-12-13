@@ -10,7 +10,7 @@ function sendOrderMessageToQueue(array $order, string $queueName): bool {
         $channel = $connection->channel();
 
         // Declare the queue to ensure it exists
-        $channel->queue_declare($queueName, false, false, false, false);
+        $channel->queue_declare($queueName, false, true, false, false);
 
         // Prepare Message Properties
         $properties = [

@@ -29,14 +29,14 @@ try {
     $channel = $connection->channel();
 
     $responseQueue = 'webshop-orders-out';
-    $channel->queue_declare($responseQueue, false, false, false, false);
+    $channel->queue_declare($responseQueue, false, true, false, false);
 
     // Consume message (non-blocking)
     $callback = function($msg) use (&$erpResponse) {
         $erpResponse = json_decode($msg->body, true);
     };
 
-    $channel->basic_consume($responseQueue, '', false, false, false, false, $callback);
+    $channel->basic_consume($responseQueue, '', false, true, false, false, $callback);
 
     // Wait a short time (max 2 seconds) for a message
     $start = microtime(true);
